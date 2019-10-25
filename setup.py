@@ -7,7 +7,7 @@ import re
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst')) as f:
+with open(path.join(here, 'README.md')) as f:
     long_description = f.read()
 
 # get the dependencies and installs
