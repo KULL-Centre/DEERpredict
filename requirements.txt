@@ -1,0 +1,5 @@
+Cython
+numpy
+matplotlib>=1.5.0
+scipy>=0.18.0
+MDAnalysis>=0.16.0

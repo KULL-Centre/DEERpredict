@@ -1,0 +1,122 @@
+#! /usr/bin/env python
+
+import os.path
+
+import MDAnalysis
+import time
+
+from DEERpredict.PREPrediction import PREPrediction
+
+import logging
+logger = logging.getLogger("MDAnalysis.app")
+
+
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+
+parser.add_argument("topology", type=str, default=None,
+                    help="Topology to analyze.")
+
+parser.add_argument("residue", type=int, default=None,
+                    help="residue index to compute EPR distances")
+
+parser.add_argument("--trajectory", type=str, nargs=1, default=None, action='append',
+                    help="Trajectory to analyze.")
+
+parser.add_argument("--chains", type=str, nargs=1, dest="chains", default=None,
+                  help="OPTIONAL: Chains for differentiation on homodimeric proteins")
+
+parser.add_argument("--discard", dest="discard_frames", type=int, default=0,
+                  help="OPTIONAL: discard the first N frames [%(default)s]")
+
+parser.add_argument("--output", dest="output_prefix", default="profile",
+                  help="OPTIONAL: the path and name of the output prefix; the filename will "
+                       "have the probe number inserted before the extension [%(default)s]")
+
+parser.add_argument("--libname", dest="libname", metavar="NAME", default="MTSSL 175K X1X2",
+                  help="OPTIONAL: name of the rotamer library [%(default)s]")
+
+parser.add_argument("--plotname", dest="plotname", metavar="FILENAME", default=None,
+                  help="OPTIONAL: plot the histogram to FILENAME (the extensions determines the format) "
+                       "By default <outputFile>.pdf.")
+
+parser.add_argument("--tau", type=float, dest='tau', metavar='TAU', default=20.0e-9,
+                    help='OPTIONAL: Tau_c value for the Ipre/I0 calculation [%(default)s] - obsolete if you are '
+                         'running SBMF model')
+
+parser.add_argument("--tau_c", type=float, dest='tau_c', metavar='TAU_C', default=4.0e-9,
+                      help='OPTIONAL: Tau_c value for the Ipre/I0 calculation [%default]')
+
+parser.add_argument("--tau_t", type=float, dest='tau_t', metavar='TAU_T', default=1.0e-10,
+                      help='OPTIONAL: Tau_t value for the Ipre/I0 calculation [%default]')
+
+parser.add_argument("--delay", type=float, dest='t', metavar='DELAY', default=12e-3,
+                  help='OPTIONAL: INEPT delay value for the Ipre/I0 calculation [%(default)s]')
+
+parser.add_argument('--r2', dest='r2file', nargs=1, metavar='FILENAME', default=None,
+                  help='OPTIONAL: file containing the measured R2 values per residue, in the <residue number>'
+                       ' <R2> format. If this file is not given, the calculation will be performed with the '
+                       'length of the protein multiplied by the average amino acid molecular weight in kDa.'
+                       ' The same is done for residues not in the R2 file.')
+parser.add_argument('--default_r2', dest='default_r2', nargs=1, metavar='R2_def', default=2.5,
+                  help='Default R2 value that is assumed for ALL residues of the protein')
+
+parser.add_argument('--wh', type=float, dest='wh', nargs=1, metavar='WH_VALUE', default=0,
+                  help='OPTIONAL: Wh value, in float')
+
+parser.add_argument('--pdelta', type=int, dest='plotting_delta', nargs=1, metavar='INTEGER', default=0,
+                  help='OPTIONAL: by default, the plot will start at residue 1 regardless of protein '
+                       'amino acids. Use this option to set how much x should be shifted in the plot.')
+
+parser.add_argument('--replicas', type=int, dest='replicas', metavar='REPLICAS', default=1,
+                  help='OPTIONAL: indicate the number of replicas to average for, in case of replica-averaged '
+                       'simulation data. These should be concatenated and replica length will be'
+                       ' <full trajectory length> / <number of replicas>.')
+
+parser.add_argument("--selection", dest="selection", metavar="SELECTION_STRING", default='HN',
+                  help="OPTIONAL: Select the naming of the backbone NH hydrogen."
+                       "HN by default.")
+
+parser.add_argument('--exp_I', dest='exp_intensities', metavar='FILENAME', default=None,
+                    help='OPTIONAL: file containing the measured intesities, in the '
+                         ' <Intensity> format. If this file is not given, no optimization will be performed')
+
+parser.add_argument('--save', dest='save_file', metavar='FILENAME', default='r_r_S.dat',
+                  help='OPTIONAL: File to save resid, <r>, S^2 per frame to re-use for fitting e.g. tau_c')
+parser.add_argument('--load', dest='load', metavar='FILENAME', default='r_r_S.dat',
+                  help='OPTIONAL: File to read <r>, S^2 per frame to re-use for fitting e.g. tau_c')
+parser.add_argument('--optimize', dest='optimize', metavar='BOOLEAN', default=False,
+                  help='OPTIONAL: optimize tau_C vs. Exp. Intensities - needs exp_intensities file to be specified.')
+parser.add_argument('--idp', dest='idp', metavar='BOOLEAN', default=False,
+                  help='default False - should be set to True if no RMSF filtering is done.: .')
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+
+    MDAnalysis.start_logging()
+
+    # load the reference protein structure
+    try:
+        proteinStructure = MDAnalysis.Universe(args.topology, args.trajectory)
+        logger.info("Loading trajectory data as Universe({0}, {1})".format(args.topology, *args.trajectory))
+    except TypeError:
+        proteinStructure = MDAnalysis.Universe(args.topology)
+        logger.info("Loading trajectory data as Universe({0})".format(args.topology))
+    except ValueError:
+        logger.critical("Protein structure and/or trajectory not correctly specified")
+        raise IOError("Protein structure and/or trajectory not correctly specified")
+    if args.residues is None or len(args.residues) != 2:
+        raise ValueError("Provide residue ids in --residues R1 R2")
+
+    startTime = time.time()
+    R = PREPrediction(proteinStructure, args.residues, chains=args.chains, output_prefix=args.output_prefix,
+                       libname=args.libname, discard_frames=args.discard_frames, r2=args.r2file,
+                       plotting_delta=args.plotting_delta, replicas=args.replicas,
+                       selection=args.selection, exp_intensities=args.exp_intensities,
+                       save_file=args.save_file, load=args.load, optimize=args.optimize,
+                       tau_c=args.tau_c, idp=args.idp)
+    logger.info("DONE with analysis, elapsed time %6i s" % (int(time.time() - startTime)))
+
+    MDAnalysis.stop_logging()
