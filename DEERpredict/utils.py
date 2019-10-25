@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Utilities
 =========
@@ -7,25 +6,23 @@ Inherited functions and methods for usage in the prediction classes.
 
 """
 
-
 # Coordinates and arrays
 import math
 import numpy as np
 import MDAnalysis
 from MDAnalysis.coordinates.memory import MemoryReader
-import MDAnalysis.lib.NeighborSearch as KBTNS
-import MDAnalysis.analysis.distances as mda_dist
 
 # Plotting
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+
 # Logger
 import logging
 
 # Inner imports
-from DEERpredict.lennardjones import lj_parameters
+from DEERpredict.lennardjones import vdw, p_Rmin2, eps
 import DEERpredict.libraries
 
 import seaborn as sns
@@ -74,12 +71,11 @@ class Operations(object):
         self.mc = None
         self.r0 = kwargs.pop('r0', 5.4)
 
-    def rotamer_placement(self, probe_array, protein, site_resid, chain=None, probe_library=None):
+    def pre_calculate_rotamer(self, protein, site_resid, chain=None, probe_library=None):
         """
-        Rotates and translates the rotamer from its coordinate system to the protein's coordinate system.
+        Pre-calculates some objects that do not depend on positions
 
         Args:
-            probe_array (:py:class:`numpy.ndarray`): relative coordinates of each rotamer
             protein (:py:class:`MDAnalysis.core.universe.Universe`): Single frame from protein structure universe object
             site_resid (:py:class:`int`): Integer, 1-based, indicating the position at which to place the rotamer
             chain (:py:class:`str`): Chain indicator string.
@@ -87,9 +83,11 @@ class Operations(object):
 
         Returns:
             :py:class:`MDAnalysis.core.universe.Universe`: Probe positions in the new coordinate system
+            :py:tuple: Tuple with Prot_ca, prot_Co, prot_N
         """
         if not probe_library:
             probe_library = self.lib
+
         if chain:
             prot_Ca = protein.select_atoms('protein and name CA and resid {0} and segid {1}'.format(site_resid, chain))
             prot_Co = protein.select_atoms('protein and name C and resid {0} and segid {1}'.format(site_resid, chain))
@@ -98,7 +96,25 @@ class Operations(object):
             prot_Ca = protein.select_atoms('protein and name CA and resid {0}'.format(site_resid))
             prot_Co = protein.select_atoms('protein and name C and resid {0}'.format(site_resid))
             prot_N = protein.select_atoms('protein and name N and resid {0}'.format(site_resid))
+        probe_coords = np.zeros((len(probe_library.top.atoms),1, 3))
+        new_universe = MDAnalysis.Universe(probe_library.top.filename, probe_coords, format=MemoryReader, order='afc')
+        return new_universe, (prot_Ca, prot_Co, prot_N)
+        
+    def rotamer_placement(self, universe, prot_atoms, probe_array, probe_library=None):
+        """
+        Rotates and translates the rotamer from its coordinate system to the protein's coordinate system.
 
+        Args:
+            prot_atoms (py:tuple) : prot_Ca, prot_Co, prot_N 
+            probe_array (:py:class:`numpy.ndarray`): relative coordinates of each rotamer
+            probe_library (:py:class:`str`):  Probe library name
+
+        Returns:
+            :py:class:`MDAnalysis.core.universe.Universe`: Probe positions in the new coordinate system
+        """
+        if not probe_library:
+            probe_library = self.lib
+        prot_Ca, prot_Co, prot_N = prot_atoms
         offset = prot_Ca.positions.copy()
         Ca_coords = prot_Ca.positions - offset
         Co_coords = prot_Co.positions - offset
@@ -118,9 +134,8 @@ class Operations(object):
         probe_coords += offset
         probe_coords = probe_coords.swapaxes(0, 1)
 
-        new_universe = MDAnalysis.Universe(probe_library.top.filename, probe_coords, format=MemoryReader, order='afc')
-        return new_universe
-
+        universe.load_new(probe_coords, format=MemoryReader,order='afc')
+        return universe
 
     def lj_calculation(self, fitted_rotamers, protein, site_resid, e_cutoff = 1e10, ign_H = True, forgive = 0.5,
                        hard_spheres = False, fret = False):
@@ -139,7 +154,6 @@ class Operations(object):
         """
         gas_un = 1.9858775e-3 # CHARMM, in kcal/mol*K
         #forgive = 0.5
-        cuttoff = 10 # Angstrom
         # maxdist = 11.828 # comes from library, used to hole for the mutation
         if ign_H:
             proteinNotSite = protein.select_atoms("protein and not type H and not (resid {0})".format(site_resid))
@@ -147,32 +161,44 @@ class Operations(object):
         else:
             proteinNotSite = protein.select_atoms("protein and not (resid {0})".format(site_resid))
             rotamerSel_LJ = fitted_rotamers.select_atoms("not (name CA or name C or name N or name O)")
-        proteinNotSiteLookup = KBTNS.AtomNeighborSearch(proteinNotSite)
+            
+        eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
+        rmin_rotamer = np.array([p_Rmin2[probe_atom] for probe_atom in rotamerSel_LJ.types])*forgive
+
+        eps_protein = np.array([eps[probe_atom] for probe_atom in proteinNotSite.types])
+        rmin_protein = np.array([p_Rmin2[probe_atom] for probe_atom in proteinNotSite.types])*forgive
+        eps_ij = np.sqrt(np.multiply.outer(eps_rotamer, eps_protein))
+        
+        rmin_ij = np.add.outer(rmin_rotamer, rmin_protein)
+        #Convert atom groups to indices for efficiecy
+        rotamerSel_LJ = rotamerSel_LJ.indices
+        proteinNotSite = proteinNotSite.indices
+          
+          
+        cuttoff =10.
+            
+        #Convert indices of protein atoms (constant within each frame) to positions
+        proteinNotSite = protein.trajectory.ts.positions[proteinNotSite]
+        
         lj_energy_pose = np.zeros((len(fitted_rotamers.trajectory)))
         for rotamer_counter, rotamer in enumerate(fitted_rotamers.trajectory):
-            inLJrange = proteinNotSiteLookup.search(rotamerSel_LJ, cuttoff)
-            if inLJrange:
-                d = np.zeros((len(rotamerSel_LJ.positions),len(inLJrange.positions)), dtype=np.float64)
-                d = mda_dist.distance_array(rotamerSel_LJ.positions, inLJrange.positions, result=d,
-                                                                 backend="OpenMP")
-                for probe_counter, probe_atom in enumerate(rotamerSel_LJ):
-                    eps_i, rmin_i = lj_parameters[probe_atom.type]['eps'], lj_parameters[probe_atom.type]['p_Rmin2']*forgive
-                    for j_atom_counter, j_atom in enumerate(inLJrange):
-                        pair_dist = d[(probe_counter, j_atom_counter)]
-                        if pair_dist < cuttoff:
-                            eps_j, rmin_j = lj_parameters[j_atom.type]['eps'], lj_parameters[j_atom.type]['p_Rmin2']*forgive
-                            eps_ij = (eps_i*eps_j)**0.5  # get geometrical mean for eps1 and eps2
-                            rmin_ij = rmin_i+rmin_j # CHARMM FF mixing rules
-                            pair_LJ_energy = eps_ij*(((rmin_ij/pair_dist)**12)-2*((rmin_ij/pair_dist)**6))
-                            lj_energy_pose[rotamer_counter] += pair_LJ_energy
-                            if hard_spheres:
-                                comb_vdw = lj_parameters[probe_atom.type]['vdw'] + lj_parameters[j_atom.type]['vdw']
-                                if pair_dist <= comb_vdw:
-                                    #hard sphere rejection then happens via e_cut
-                                    lj_energy_pose[rotamer_counter] += 1e99
-
+            # RCS: Calculating all the distances seems to be much faster than any kind of
+            # approach to calculate neighbours. capped_distances, and NeighborSearch are slower
+            d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ], 
+                proteinNotSite)
+            d = rmin_ij/d
+            d = d*d*d
+            d = d*d
+            pair_LJ_energy = eps_ij*(d*d-2.*d)
+            #This is slower (but clearer), and it took ~50% of execution time:
+            #pair_LJ_energy = eps_ij*(((rmin_ij/d)**12)-2*((rmin_ij/d)**6))
+            #This also seems to be slightly slower. TODO re-check.
+            #pair_LJ_energy = ne.evaluate('eps_ij*(((rmin_ij/d)**12)-2*((rmin_ij/d)**6))')         
+            lj_energy_pose[rotamer_counter] = pair_LJ_energy.sum()
+            
         #if numpy.isnan(lj_energy_pose).any()
         # checking energies are below cutoff
+        #WARNING: remove this. Unnecessary.
         for e, rotE in enumerate(lj_energy_pose):
             if rotE >= e_cutoff:
                 if fret:
@@ -191,6 +217,7 @@ class Operations(object):
             #print lj_energy_pose
 
         return np.exp(-lj_energy_pose/(gas_un*self.temp))  # for new alignment method
+
 
     def sb_equation(self, dist_array, tau, wh, k):
         """

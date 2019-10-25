@@ -22,11 +22,12 @@ from scipy.optimize import least_squares
 import logging
 
 # Inner imports
-from DEERpredict.utils import Operations
+from DEERpredict.utils3 import Operations
 
 logger = logging.getLogger("MDAnalysis.app")
 
-class PREPrediction2(Operations):
+
+class PREPrediction(Operations):
     """Calculation of the distance profile between a probe and backbone amide protons."""
 
     def __init__(self, protein_structure, residue, **kwargs):
@@ -409,7 +410,15 @@ class PREPrediction2(Operations):
 
         if self.cb == True:
             r6_cb_store = np.full((len(protein_structure.trajectory), len(measured_residues)), np.nan)
-
+        
+        # Before getting into this loop, which consumes most of the calculations time
+        # we can pre-calculate several things that do not vary along the loop
+        # and which take time to calculate
+        universe, prot_atoms = self.pre_calculate_rotamer(protein_structure,
+                           residue,
+                           self.chains,
+                           probe_library=self.lib)
+        
         for frame_ndx, protein in enumerate(
                 protein_structure.trajectory[self.discard_frames:]):  # discard first on gromacs xtc
             #time0 = time.time()
@@ -421,10 +430,9 @@ class PREPrediction2(Operations):
             # ordered list has to be created as the ordering of C CA N is
             # different in both. Fit the rotamers onto the protein:
             # New placement method
-            rotamersSite1 = self.rotamer_placement(self.lib.data,
-                                                   protein_structure,
-                                                   residue,
-                                                   self.chains,
+            rotamersSite1 = self.rotamer_placement(universe,
+                                                   prot_atoms,
+                                                   self.lib.data,
                                                    probe_library=self.lib)
 
             # boltz1 = self.lj_calculation(rotamersSite1, protein_structure, residue)
@@ -434,7 +442,7 @@ class PREPrediction2(Operations):
             # boltzman_weights_norm1 = boltzman_weights1/np.sum(boltzman_weights1)
             # print boltzman_weights_norm1
 
-            boltz1 = self.lj_calculation2(rotamersSite1, protein_structure, residue, e_cutoff=self.e_cutoff,
+            boltz1 = self.lj_calculation(rotamersSite1, protein_structure, residue, e_cutoff=self.e_cutoff,
                                          ign_H=self.ign_H, hard_spheres=self.hard_spheres)
             
             #print()
