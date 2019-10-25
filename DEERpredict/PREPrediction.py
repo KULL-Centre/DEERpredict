@@ -9,13 +9,13 @@ Class to perform Paramagnetic Relaxation Enhancement prediction, employing the M
 
 import sys
 import os
-import pickle as pickle
+import pickle
 #import time
 # Coordinates and arrays
 import numpy as np
 import MDAnalysis
 import math
-import MDAnalysis.analysis.distances as mda_dist
+import MDAnalysis.lib.distances as mda_dist
 from scipy.optimize import least_squares
 
 # Logger
@@ -26,7 +26,7 @@ from DEERpredict.utils import Operations
 
 logger = logging.getLogger("MDAnalysis.app")
 
-class PREPrediction(Operations):
+class PREPrediction2(Operations):
     """Calculation of the distance profile between a probe and backbone amide protons."""
 
     def __init__(self, protein_structure, residue, **kwargs):
@@ -414,26 +414,18 @@ class PREPrediction(Operations):
                 protein_structure.trajectory[self.discard_frames:]):  # discard first on gromacs xtc
             #time0 = time.time()
             progressmeter.echo(protein.frame - self.discard_frames)
+
             self.current_replica = ((protein.frame - self.discard_frames) // self.frames_pre_replica)
             # print frame_ndx
             # define the atoms used to fit the rotamers. Note that an
             # ordered list has to be created as the ordering of C CA N is
             # different in both. Fit the rotamers onto the protein:
-            if self.chains:
-                # New placement method
-                rotamersSite1 = self.rotamer_placement(self.lib.data,
-                                                       protein_structure,
-                                                       residue,
-                                                       self.chains,
-                                                       probe_library=self.lib)
-
-            else:
-                # New placement method
-                rotamersSite1 = self.rotamer_placement(self.lib.data,
-                                                       protein_structure,
-                                                       residue,
-                                                       self.chains,
-                                                       probe_library=self.lib)
+            # New placement method
+            rotamersSite1 = self.rotamer_placement(self.lib.data,
+                                                   protein_structure,
+                                                   residue,
+                                                   self.chains,
+                                                   probe_library=self.lib)
 
             # boltz1 = self.lj_calculation(rotamersSite1, protein_structure, residue)
             # boltz1_sum = np.sum(boltz1)
@@ -442,7 +434,7 @@ class PREPrediction(Operations):
             # boltzman_weights_norm1 = boltzman_weights1/np.sum(boltzman_weights1)
             # print boltzman_weights_norm1
 
-            boltz1 = self.lj_calculation(rotamersSite1, protein_structure, residue, e_cutoff=self.e_cutoff,
+            boltz1 = self.lj_calculation2(rotamersSite1, protein_structure, residue, e_cutoff=self.e_cutoff,
                                          ign_H=self.ign_H, hard_spheres=self.hard_spheres)
             
             #print()
@@ -460,7 +452,6 @@ class PREPrediction(Operations):
             boltz1 = np.multiply(lib_norm, boltz1)
             z_1 = np.nansum(boltz1)
             #print(z_1)
-
             if z_1 <= self.z_cutoff:
                 #print('ignoring this frame')
                 tight_count += 1
@@ -504,52 +495,39 @@ class PREPrediction(Operations):
                 for frame, ts in enumerate(rotamersSite1.trajectory):
                     probe_coordinates[frame] = rotamer1nitrogen.positions
 
-            size = len(resid_nitrogen_pos)  # should be measured_residues.size, repeated value
-            dists_array_r1 = np.zeros((1, size), dtype=np.float64)
-            dists_array_r1_alt = np.zeros((1, size), dtype=np.float64)
-            angle = np.zeros(measured_residues.size)
+            #size = len(resid_nitrogen_pos)  # should be measured_residues.size, repeated value
 
-            r1_tmp = np.zeros((size))
-            r6_tmp = np.zeros((size))
-            r3_tmp = np.zeros((size))
-            angstrom_to_meters = 1e-8
+
+
+
+            angstrom_to_meters = 1e-8 #WARNING: this is conversion to centimeters.
 
             #time1 = time.time()
             #print('2: {:.3f}s'.format(time1-time0))
             #time0 = time1
-            for position1_index, position1 in enumerate(nitro1_pos):  # distance calculation parallelization is here
-                mda_dist.distance_array(position1, resid_nitrogen_pos, result=dists_array_r1, backend="OpenMP")
-                n_probe_vector = position1 - resid_nitrogen_pos
-                for next_index, next_position in enumerate(nitro1_pos):
-                    mda_dist.distance_array(next_position, resid_nitrogen_pos, result=dists_array_r1_alt,
-                                            backend="OpenMP")
-                    n_probe_vector_next = next_position - resid_nitrogen_pos
-                    vect = np.sum((n_probe_vector[list(range(size))] * angstrom_to_meters) * (
-                    n_probe_vector_next[list(range(size))] * angstrom_to_meters), axis=1)
-                    leng = np.multiply(dists_array_r1[0][list(range(size))] * angstrom_to_meters,
-                                       dists_array_r1_alt[0][list(range(size))] * angstrom_to_meters)
-                    cos = vect / leng
-                    angle[list(range(size))] += (((3 / 2) * np.power(cos, 2)) - 0.5) * (
-                    boltzman_weights_norm1[position1_index] * boltzman_weights_norm1[next_index])
-                # print 'DArrayUntaint:'
-                # print dists_array_r1
-                dists_array_r1 *= angstrom_to_meters
-                # print 'DArray:'
-                # print dists_array_r1
-                dists_array_r3 = np.power(np.copy(dists_array_r1), -3)
-                dists_array_r6 = np.power(np.copy(dists_array_r1), -6)
-                # r6_store[frame_ndx, :] = np.power(np.copy(dists_array_r1), -6)
-                # r3_store[frame_ndx, :] = np.power(np.copy(dists_array_r1), -3)
-                # full simulation summation
-                distributions_r1[0][list(range(len(dists_array_r1[0])))] += dists_array_r1[0] * boltzman_weights_norm1[
-                    position1_index]
-                distributions_r6[0][list(range(len(dists_array_r6[0])))] += dists_array_r6[0] * boltzman_weights_norm1[
-                    position1_index]
-                distributions_r3[0][list(range(len(dists_array_r3[0])))] += dists_array_r3[0] * boltzman_weights_norm1[
-                    position1_index]
-                r1_tmp[list(range(len(dists_array_r1[0])))] += dists_array_r1[0] * boltzman_weights_norm1[position1_index]
-                r6_tmp[list(range(len(dists_array_r1[0])))] += dists_array_r6[0] * boltzman_weights_norm1[position1_index]
-                r3_tmp[list(range(len(dists_array_r1[0])))] += dists_array_r3[0] * boltzman_weights_norm1[position1_index]
+            
+            #nitro1_pos = np.squeeze(nitro1_pos) #dimensions were (n,1,3)
+            #dists_array_r1 = mda_dist.distance_array(nitro1_pos, resid_nitrogen_pos,backend="OpenMP")
+            n_probe_vector =nitro1_pos-resid_nitrogen_pos
+            vect = (n_probe_vector*n_probe_vector[:,None,:,:]).sum(-1)*angstrom_to_meters*angstrom_to_meters
+            dists_array_r1 = mda_dist.distance_array(np.squeeze(nitro1_pos), 
+                             resid_nitrogen_pos,backend="OpenMP")*angstrom_to_meters
+            leng = dists_array_r1*dists_array_r1[:,None,:]
+            cos = vect/leng
+            angle = (((3 / 2) * np.power(cos, 2)) - 0.5)*np.outer(boltzman_weights_norm1, boltzman_weights_norm1)[:,:,None]
+            angle = angle.sum(axis=(0,1))
+            
+            dists_array_r3 = np.power(np.copy(dists_array_r1), -3) 
+            dists_array_r6 = np.power(np.copy(dists_array_r1), -6) #WARNING: use square of dists_array_r3
+
+            distributions_r1 = boltzman_weights_norm1.dot(dists_array_r1)
+            distributions_r6 = boltzman_weights_norm1.dot(dists_array_r6)
+            distributions_r3 = boltzman_weights_norm1.dot(dists_array_r3)
+
+            r1_tmp = distributions_r1.copy()
+            r6_tmp = distributions_r6.copy()
+            r3_tmp = distributions_r3.copy() 
+
             if self.cb == True:
                 # print 'CB output requested!'
                 # print prot_cb_selection.positions
@@ -567,18 +545,18 @@ class PREPrediction(Operations):
             # print 'yo!'
             # print r6_tmp[1]
             # print max(r6_tmp)
-            r1_store[frame_ndx, list(range(len(dists_array_r1[0])))] = r1_tmp
-            r6_store[frame_ndx, list(range(len(dists_array_r6[0])))] = r6_tmp
-            r3_store[frame_ndx, list(range(len(dists_array_r3[0])))] = r3_tmp
-            cosine_store[frame_ndx, list(range(len(dists_array_r3[0])))] = angle
-            cosine[0][list(range(size))] += angle[list(range(size))]
-            s2_store[frame_ndx, list(range(size))] = self.get_s_pre(r6_store[frame_ndx, list(range(size))],
-                                                              r3_store[frame_ndx, list(range(size))], self.tau_c, self.tau_t,
-                                                              self.wh, self.k, angle[list(range(size))])
-            gamma_2_store[frame_ndx, list(range(size))] = self.gamma_2(r6_store[frame_ndx, list(range(size))],
-                                                                 r3_store[frame_ndx, list(range(size))], self.tau_c,
-                                                                 self.tau_t, self.wh, self.k, angle[list(range(size))])
 
+            r1_store[frame_ndx] = r1_tmp
+            r6_store[frame_ndx] = r6_tmp
+            r3_store[frame_ndx] = r3_tmp
+            cosine_store[frame_ndx] = angle
+
+            cosine[0] += angle
+            s2_store[frame_ndx] = self.get_s_pre(r6_tmp, r3_tmp, self.tau_c, 
+                                           self.tau_t, self.wh, self.k, angle)
+            gamma_2_store[frame_ndx] = self.gamma_2(r6_tmp, r3_tmp, self.tau_c,
+                                           self.tau_t, self.wh, self.k, angle)
+           
         # print 'state'
         # print np.nanmean(r6_store, axis = 0)
         # print np.nanmean(r6_store, axis = 0)[1]
