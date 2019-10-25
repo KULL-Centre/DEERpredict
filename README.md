@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 DEERpredict
-===============================
+===========
 
 version number: 0.2.0
 author: João Martins, Ramon Crehuet
@@ -43,7 +42,3 @@ Testing
 
     $ cd deepredict
     $ python -m pytest
-=======
-# DEERpredict
-Software for the prediction of double electron electron resonance (DEER) and paramagnetic resonance enhancements (PRE)
->>>>>>> c6a367dd019c6b4bf0842fe968612c9fcfcce5d7
