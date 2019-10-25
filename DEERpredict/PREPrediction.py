@@ -22,7 +22,7 @@ from scipy.optimize import least_squares
 import logging
 
 # Inner imports
-from DEERpredict.utils3 import Operations
+from DEERpredict.utils import Operations
 
 logger = logging.getLogger("MDAnalysis.app")
 
