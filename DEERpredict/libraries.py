@@ -421,7 +421,7 @@ def find_file(filename, pkglibdir=LIBDIR):
 with open(find_file('libraries.yml'), 'r') as yaml_file:
     #: Registry of libraries, indexed by name.
     #: Takes the format = {name: {topology, data, author, license, citation}, ...}
-    LIBRARIES = yaml.load(yaml_file)
+    LIBRARIES = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
 class RotamerLibrary(object):
     """
