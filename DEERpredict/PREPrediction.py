@@ -41,12 +41,14 @@ class PREPrediction():
         #logging.info('The number of frames is {}'.format(protein.trajectory.n_frames))
         self.tau_c = kwargs.get('tau_c', 1.0e-9)  
         self.tau_t = kwargs.get('tau_t', 5.0e-10)  
-        self.wh = 1e6*np.pi*kwargs.get('wh', 700.0)
+        self.wh = 1e6*kwargs.get('wh', 700.0)
         self.k = kwargs.get('k', 1.23e16)
         self.t = kwargs.get('delay', 10.0e-3)
         self.load_file = kwargs.get('load_file', False)
         # Weights for each frame
         self.weights = kwargs.get('weights', False)
+        # Approximate electron position at Cbeta
+        self.Cbeta = kwargs.get('Cbeta', False)
 
         self.atom_selection = kwargs.get('atom_selection', 'HN')
         self.resnums = protein.select_atoms('name {} and protein'.format(self.atom_selection)).resnums
@@ -59,7 +61,7 @@ class PREPrediction():
         self.r_2[self.measured_resnums - 1] = kwargs.get('r_2', 10.0);
         #self.r_2[self.measured_resnums - 1] = np.exp(-np.abs(self.measured_resnums-self.resnums[:,np.newaxis])/5).sum(axis=0)
         # Backend settings for testing only
-        self.z_cutoff = 0.2
+        self.z_cutoff = kwargs.get('z_cutoff', 0.2)
         self.ign_H = True
 
     def pre_calculate_rotamer(self):
@@ -132,6 +134,11 @@ class PREPrediction():
         j = lambda w : s_pre*tau_c / (1+(w*tau_c)**2) + (1-s_pre)*tau_t / (1+(w*tau_t)**2)
         return k*dist_r6*(4*j(0) + 3*j(wh))
 
+    @staticmethod
+    def calc_gamma_2_Cbeta(dist_r6, tau_c, wh, k):
+        j = lambda w : tau_c / (1+(w*tau_c)**2)
+        return k*dist_r6*(4*j(0) + 3*j(wh))
+
     def saveIratio(self, data):  
         if isinstance(self.weights, np.ndarray):
             if self.weights.size != data['r6'].shape[0]:
@@ -147,15 +154,18 @@ class PREPrediction():
         # Weighted averages of r^-6
         r6_av = np.ma.MaskedArray(data['r6'], mask=np.isnan(data['r6']))
         r6_av = np.ma.average(r6_av, weights=self.weights, axis=0).data
-        # Weighted averages of r^-3
-        r3_av = np.ma.MaskedArray(data['r3'], mask=np.isnan(data['r3']))
-        r3_av = np.ma.average(r3_av,  weights=self.weights, axis=0).data
-        # Weighted averages of the squared angular component of the order parameter
-        angular_av = np.ma.MaskedArray(data['angular'], mask=np.isnan(data['angular']))
-        angular_av = np.ma.average(angular_av, weights=self.weights, axis=0).data
-        # Transverse relaxation rate due to the presence of the unpaired electron
+        # Transverse relaxation rate enhancement due to the presence of the unpaired electron
         gamma_2 = np.full(self.resnums.size, fill_value=np.NaN)
-        gamma_2[self.measured_resnums - 1] = self.calc_gamma_2(r6_av, r3_av, self.tau_c, self.tau_t, self.wh, self.k, angular_av)
+        if (self.Cbeta):
+            gamma_2[self.measured_resnums - 1] = self.calc_gamma_2_Cbeta(r6_av, self.tau_c, self.wh, self.k)
+        else:
+            # Weighted averages of r^-3
+            r3_av = np.ma.MaskedArray(data['r3'], mask=np.isnan(data['r3']))
+            r3_av = np.ma.average(r3_av,  weights=self.weights, axis=0).data
+            # Weighted averages of the squared angular component of the order parameter
+            angular_av = np.ma.MaskedArray(data['angular'], mask=np.isnan(data['angular']))
+            angular_av = np.ma.average(angular_av, weights=self.weights, axis=0).data
+            gamma_2[self.measured_resnums - 1] = self.calc_gamma_2(r6_av, r3_av, self.tau_c, self.tau_t, self.wh, self.k, angular_av)
         # Paramagnetic / diamagnetic intensity ratio
         i_ratio = self.r_2 * np.exp(-gamma_2 * self.t) / ( self.r_2 + gamma_2 )
         np.savetxt(self.output_prefix+'-{}.dat'.format(self.residue),np.c_[self.resnums,i_ratio,gamma_2],header='residue i_ratio gamma_2')
@@ -182,7 +192,7 @@ class PREPrediction():
         amide_nit_pos = self.protein.select_atoms(
             "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
         # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
-        n_probe_vector = (nitro_pos - amide_nit_pos)
+        n_probe_vector = nitro_pos - amide_nit_pos
         # Distances between nitroxide and amide groups
         dists_array_r = mda_dist.distance_array(np.squeeze(nitro_pos),amide_nit_pos,backend='OpenMP')
         # Ratio between distance vectors and distances 
@@ -204,7 +214,6 @@ class PREPrediction():
         r = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
         r3 = np.full(r.shape, np.nan)
         r6 = np.full(r.shape, np.nan)
-        s2 = np.full(r.shape, np.nan)
         angular = np.full(r.shape, np.nan)
         # Radius of gyration of frames discarded due to tight placement of the rotamers
         # tight_rg = np.empty(0)  
@@ -241,6 +250,29 @@ class PREPrediction():
         data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')
         # logging.info('Calculated distances and order parameters are saved to {}.'.format(self.output_prefix+'-{:d}.pkl'.format(residue)))
         return data
+
+    def trajectoryAnalysisCbeta(self):
+        # Create arrays to store per-frame inverse distances, angular order parameter, and relaxation rate
+        r = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
+        r3 = np.full(r.shape, np.nan)
+        r6 = np.full(r.shape, np.nan)
+        angular = np.full(r.shape, np.nan)
+        # Positions of the Cbeta atom of the spin-labeled residue
+        spin_labeled_Cbeta = self.protein.select_atoms("protein and name CB and resid {:d}".format(self.residue)).positions
+        # Positions of the backbone nitrogen atoms
+        amide_nit_pos = self.protein.select_atoms(
+            "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
+        # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
+        n_probe_vector = spin_labeled_Cbeta - amide_nit_pos
+        # Distances between nitroxide and amide groups
+        dists_array_r = mda_dist.distance_array(spin_labeled_Cbeta,amide_nit_pos,backend='OpenMP')
+        # Weighted averages of the interaction distance over all rotamers
+        r6 = np.power(dists_array_r,-6)
+        # Saving analysis as a pickle file
+        data = pd.Series({'r3':r3.astype(np.float32), 'r6':r6.astype(np.float32), 'angular':angular.astype(np.float32)})
+        data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')
+        # logging.info('Calculated distances and order parameters are saved to {}.'.format(self.output_prefix+'-{:d}.pkl'.format(residue)))
+        return data
         
     def run(self):
         if self.load_file:
@@ -251,5 +283,8 @@ class PREPrediction():
                 raise FileNotFoundError('File {} not found!'.format(self.load_file))
             data = pd.read_pickle(self.load_file,compression='gzip')
         else:
-            data = self.trajectoryAnalysis()
+            if self.Cbeta:
+                data = self.trajectoryAnalysisCbeta()
+            else:
+                data = self.trajectoryAnalysis()
         self.saveIratio(data)
