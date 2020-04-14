@@ -37,15 +37,14 @@ setup(
     version=find_version('DEERpredict', '__init__.py'),
     description='A package for DEER prediction over molecular dynamics ensembles. Can be installed with pip.',
     long_description=long_description,
-    url='https://github.com/Johanu/DEERpredict',
-    download_url='https://github.com/joaommartins/DEERpredict/tarball/' + find_version('DEERpredict', '__init__.py'),
+    url='https://github.com/KULL-Centre/DEERpredict',
     license='GPLv3',
     classifiers=[
       'Environment :: Console',
       'Development Status :: 3 - Alpha',
       'Intended Audience :: Developers',
       'Programming Language :: Python',
-      'Programming Language :: Python :: 2',
+      'Programming Language :: Python :: 3',
       'Natural Language :: English',
       'Operating System :: OS Independent',
       'Topic :: Scientific/Engineering :: Bio-Informatics',
@@ -55,9 +54,9 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='João Martins',
+    author='João Martins & Ramon Crehuet',
     install_requires=install_requires,
     depedency_links=dependency_links,
     scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict'],
-    author_email='joao.martins@bio.ku.dk'
+#    author_email='joao.martins@bio.ku.dk'
 )

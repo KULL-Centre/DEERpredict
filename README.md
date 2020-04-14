@@ -23,7 +23,7 @@ Or clone the repo:
 
 .. code:: bash
 
-    $ git clone https://github.com/joaommartins/deerpredict.git
+    $ git clone https://github.com/KULL-Centre/DEERpredict.git
     $ cd deepredict
 
     $ pip install -e . 

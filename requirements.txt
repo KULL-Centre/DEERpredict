@@ -3,4 +3,6 @@ numpy
 matplotlib
 scipy
 MDAnalysis
-yaml
+pyyaml
+sphinx-markdown-tables
+sphinxarg
