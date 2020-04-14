@@ -41,7 +41,7 @@ class PREPrediction():
         #logging.info('The number of frames is {}'.format(protein.trajectory.n_frames))
         self.tau_c = kwargs.get('tau_c', 1.0e-9)  
         self.tau_t = kwargs.get('tau_t', 5.0e-10)  
-        self.wh = 1e6*kwargs.get('wh', 700.0)
+        self.wh = 2*np.pi*1e6*kwargs.get('wh', 700.0)
         self.k = kwargs.get('k', 1.23e16)
         self.t = kwargs.get('delay', 10.0e-3)
         self.load_file = kwargs.get('load_file', False)
@@ -50,8 +50,8 @@ class PREPrediction():
         # Approximate electron position at Cbeta
         self.Cbeta = kwargs.get('Cbeta', False)
 
-        self.atom_selection = kwargs.get('atom_selection', 'HN')
-        self.resnums = protein.select_atoms('name {} and protein'.format(self.atom_selection)).resnums
+        self.atom_selection = kwargs.get('atom_selection', 'N')
+        self.resnums = protein.select_atoms('name N and protein').resnums
         self.resnums = np.array(self.resnums)
         self.measured_resnums = protein.select_atoms(
                 'name {} and not resid {} and not resid 1 and not resname PRO'.format(self.atom_selection,residue)).resnums
@@ -69,8 +69,8 @@ class PREPrediction():
         prot_Co = self.protein.select_atoms('protein and name C and resid {0}'.format(self.residue))
         prot_N = self.protein.select_atoms('protein and name N and resid {0}'.format(self.residue))
         probe_coords = np.zeros((len(self.lib.top.atoms),1, 3))
-        new_universe = MDAnalysis.Universe(self.lib.top.filename, probe_coords, format=MemoryReader, order='afc')
-        return new_universe, (prot_Ca, prot_Co, prot_N)
+        universe = MDAnalysis.Universe(self.lib.top.filename, probe_coords, format=MemoryReader, order='afc')
+        return universe, (prot_Ca, prot_Co, prot_N)
         
     def rotamer_placement(self, universe, prot_atoms):
         prot_Ca, prot_Co, prot_N = prot_atoms
@@ -95,33 +95,31 @@ class PREPrediction():
         universe.load_new(probe_coords, format=MemoryReader, order='afc')
         return universe
 
-    def lj_calculation(self, fitted_rotamers, forgive = 0.5):
+    def lj_calculation(self, fitted_rotamers):
         gas_un = 1.9858775e-3 # CHARMM, in kcal/mol*K
         if self.ign_H:
-            proteinNotSite = self.protein.select_atoms("protein and not type H and not (resid {0})".format(self.residue))
+            proteinNotSite = self.protein.select_atoms("protein and not type H and not resid {0}".format(self.residue))
             rotamerSel_LJ = fitted_rotamers.select_atoms("not type H and not (name CA or name C or name N or name O)")
         else:
-            proteinNotSite = self.protein.select_atoms("protein and not (resid {0})".format(self.residue))
+            proteinNotSite = self.protein.select_atoms("protein and not resid {0}".format(self.residue))
             rotamerSel_LJ = fitted_rotamers.select_atoms("not (name CA or name C or name N or name O)")
             
         eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
-        rmin_rotamer = np.array([p_Rmin2[probe_atom] for probe_atom in rotamerSel_LJ.types])*forgive
+        rmin_rotamer = np.array([p_Rmin2[probe_atom] for probe_atom in rotamerSel_LJ.types])*0.5
 
         eps_protein = np.array([eps[probe_atom] for probe_atom in proteinNotSite.types])
-        rmin_protein = np.array([p_Rmin2[probe_atom] for probe_atom in proteinNotSite.types])*forgive
+        rmin_protein = np.array([p_Rmin2[probe_atom] for probe_atom in proteinNotSite.types])*0.5
         eps_ij = np.sqrt(np.multiply.outer(eps_rotamer, eps_protein))
         
         rmin_ij = np.add.outer(rmin_rotamer, rmin_protein)
         #Convert atom groups to indices for efficiecy
         rotamerSel_LJ = rotamerSel_LJ.indices
         proteinNotSite = proteinNotSite.indices
-        cuttoff =10.
         #Convert indices of protein atoms (constant within each frame) to positions
         proteinNotSite = self.protein.trajectory.ts.positions[proteinNotSite]
         lj_energy_pose = np.zeros((len(fitted_rotamers.trajectory)))
         for rotamer_counter, rotamer in enumerate(fitted_rotamers.trajectory):
-            d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ], 
-                proteinNotSite)
+            d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ],proteinNotSite)
             d = np.power(rmin_ij/d,6)
             pair_LJ_energy = eps_ij*(d*d-2.*d)
             lj_energy_pose[rotamer_counter] = pair_LJ_energy.sum()
@@ -189,12 +187,13 @@ class PREPrediction():
         oxi_pos = np.array([rotamer_oxigen.positions for x in rotamersSite.trajectory])
         nitro_pos = (nit_pos + oxi_pos) / 2
         # Positions of the backbone nitrogen atoms
-        amide_nit_pos = self.protein.select_atoms(
+        amide_pos = self.protein.select_atoms(
             "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
         # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
-        n_probe_vector = nitro_pos - amide_nit_pos
+        n_probe_vector = nitro_pos - amide_pos
         # Distances between nitroxide and amide groups
-        dists_array_r = mda_dist.distance_array(np.squeeze(nitro_pos),amide_nit_pos,backend='OpenMP')
+        dists_array_r = np.linalg.norm(n_probe_vector,axis=2)
+        #dists_array_r = mda_dist.distance_array(np.squeeze(nitro_pos),amide_pos,backend='OpenMP')
         # Ratio between distance vectors and distances 
         n_probe_unitvector = n_probe_vector/dists_array_r[:,:,None]
         # Dot products between nitroxide-amide distances for all rotamers
@@ -209,20 +208,17 @@ class PREPrediction():
         return r3, r6, angular
 
     def trajectoryAnalysis(self):
-        # logging.info("Starting rotamer distance analysis of trajectory {:s} with labeled residue {:d}".format(protein.trajectory.filename,residue))
+        logging.info("Starting rotamer distance analysis of trajectory {:s} with labeled residue {:d}".format(self.protein.trajectory.filename,self.residue))
         # Create arrays to store per-frame inverse distances, angular order parameter, and relaxation rate
-        r = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
-        r3 = np.full(r.shape, np.nan)
-        r6 = np.full(r.shape, np.nan)
-        angular = np.full(r.shape, np.nan)
-        # Radius of gyration of frames discarded due to tight placement of the rotamers
-        # tight_rg = np.empty(0)  
+        r3 = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
+        r6 = np.full(r3.shape, np.nan)
+        angular = np.full(r3.shape, np.nan)
         # Pre-process rotamer weights
         lib_weights_norm = self.lib.weights / np.sum(self.lib.weights)
         # Before getting into this loop, which consumes most of the calculations time
         # we can pre-calculate several objects that do not vary along the loop
         universe, prot_atoms = self.pre_calculate_rotamer()
-        for frame_ndx, timestep in enumerate(self.protein.trajectory):
+        for frame_ndx, _ in enumerate(self.protein.trajectory):
             # Fit the rotamers onto the protein
             rotamersSite = self.rotamer_placement(universe, prot_atoms)
             # Calculate Boltzmann weights
@@ -230,21 +226,10 @@ class PREPrediction():
             # Skip this frame if the sum of the Boltzmann weights is smaller than the cutoff value
             if z <= self.z_cutoff:
                 # Store the radius of gyration of tight frames
-                # tight_rg = np.append(tight_rg, protein.select_atoms('protein').radius_of_gyration())
                 continue
             boltzmann_weights_norm = boltz / z
             # Calculate interaction distances and squared angular components of the order parameter
             r3[frame_ndx], r6[frame_ndx], angular[frame_ndx] = self.rotamerAnalysis(rotamersSite, boltzmann_weights_norm)
-            #if frame_ndx % 100 == 0:
-            #    logging.info('Frame index {:d} of trajectory {:s} with labeled residue {:d}'.format(frame_ndx,protein.trajectory.filename,residue))
-        #if tight_rg.size:
-        #   np.savetxt(self.output_prefix+'-{:d}_tight_rg.dat'.format(residue),tight_rg)
-        #   logging.info(
-        #        '{:d} frames have been discarded due to tight labelling position, i.e. {:.1f} % of the analyzed frames.'.format(
-        #           tight_rg.size, float(tight_rg.size) / protein.trajectory.n_frames * 100))
-        #   logging.info(
-        #        'The average radius of gyration in the discarded frames is {:.2f} +/- {:.2f} nm.'.format(
-        #           tight_rg.mean()/10., tight_rg.std()/10.))
         # Saving analysis as a pickle file
         data = pd.Series({'r3':r3.astype(np.float32), 'r6':r6.astype(np.float32), 'angular':angular.astype(np.float32)})
         data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')
@@ -253,21 +238,19 @@ class PREPrediction():
 
     def trajectoryAnalysisCbeta(self):
         # Create arrays to store per-frame inverse distances, angular order parameter, and relaxation rate
-        r = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
-        r3 = np.full(r.shape, np.nan)
-        r6 = np.full(r.shape, np.nan)
-        angular = np.full(r.shape, np.nan)
-        # Positions of the Cbeta atom of the spin-labeled residue
-        spin_labeled_Cbeta = self.protein.select_atoms("protein and name CB and resid {:d}".format(self.residue)).positions
-        # Positions of the backbone nitrogen atoms
-        amide_nit_pos = self.protein.select_atoms(
-            "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
-        # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
-        n_probe_vector = spin_labeled_Cbeta - amide_nit_pos
-        # Distances between nitroxide and amide groups
-        dists_array_r = mda_dist.distance_array(spin_labeled_Cbeta,amide_nit_pos,backend='OpenMP')
-        # Weighted averages of the interaction distance over all rotamers
-        r6 = np.power(dists_array_r,-6)
+        r3 = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
+        r6 = np.full(r3.shape, np.nan)
+        angular = np.full(r3.shape, np.nan)
+        for frame_ndx, _ in enumerate(self.protein.trajectory):
+            # Positions of the Cbeta atom of the spin-labeled residue
+            spin_labeled_Cbeta = self.protein.select_atoms("protein and name CB and resid {:d}".format(self.residue)).positions
+            # Positions of the backbone nitrogen atoms
+            amide_pos = self.protein.select_atoms(
+                "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
+            # Distances between nitroxide and amide groups
+            dists_array_r = np.linalg.norm(spin_labeled_Cbeta - amide_pos,axis=1)
+            r6[frame_ndx] = np.power(dists_array_r,-6)
+        #dists_array_r = mda_dist.distance_array(spin_labeled_Cbeta,amide_nit_pos,backend='OpenMP')
         # Saving analysis as a pickle file
         data = pd.Series({'r3':r3.astype(np.float32), 'r6':r6.astype(np.float32), 'angular':angular.astype(np.float32)})
         data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')
