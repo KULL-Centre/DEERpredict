@@ -4,5 +4,3 @@ matplotlib
 scipy
 MDAnalysis
 pyyaml
-sphinx-markdown-tables
-sphinxarg
