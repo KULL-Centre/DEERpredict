@@ -6,8 +6,7 @@ import numpy as np
 from DEERpredict.PRE import PREpredict
 import pandas as pd
 
-@pytest.fixture
-def load_expPREs(path,labels,tau_c):
+def load_precalcPREs(path,labels,tau_c):
     data = {}
     for label in labels:
         resnums, data[label] = np.loadtxt(path+'/PRE_1nti_{:g}-{:d}_CB.dat'.format(tau_c,label),unpack=True)
@@ -16,7 +15,6 @@ def load_expPREs(path,labels,tau_c):
     df.rename_axis('label', axis='columns',inplace=True)
     return resnums, df
 
-@pytest.fixture
 def load_calcPREs(path,labels):
     data = {}
     for label in labels:
@@ -26,7 +24,6 @@ def load_calcPREs(path,labels):
     df.rename_axis('label', axis='columns',inplace=True)
     return resnums, df
 
-@pytest.fixture
 def calcIratio(path,tau_c,args):
     u, label, tau_t, r_2, Cbeta = args
     PRE = PREpredict(u, label, output_prefix = path+'/calcPREs/res', weights = False,
@@ -35,13 +32,15 @@ def calcIratio(path,tau_c,args):
           atom_selection = 'H', wh = 750)
     PRE.run()
 
-def test_PRE(load_expPREs,load_calcPREs,calcIratio):
-    u = MDAnalysis.Universe('data/ACBP/1nti.pdb')
+def test_PRE():
+    if not os.path.isdir('tests/data/ACBP/calcPREs'):
+        os.mkdir('tests/data/ACBP/calcPREs')
+    u = MDAnalysis.Universe('tests/data/ACBP/1nti.pdb')
     labels = [17,36,46,65,86]
     for tau_c in [0.1,1]: 
         tau_t = tau_c if tau_c < 0.5 else 0.5
         for label in labels:
-            calcIratio('data/ACBP',tau_c,[u, label, tau_t, 12.6, True])
-        resnums, precalcPREs = load_precalcPREs('data/ACBP/precalcPREs',labels,tau_c)
-        resnums, calcPREs = load_calcPREs('data/ACBP/calcPREs',labels)
-        assert np.power(precalcPREs-calcPREs,2).sum().sum() < 0.2
+            calcIratio('tests/data/ACBP',tau_c,[u, label, tau_t, 12.6, True])
+        resnums, precalcPREs = load_precalcPREs('tests/data/ACBP/precalcPREs',labels,tau_c)
+        resnums, calcPREs = load_calcPREs('tests/data/ACBP/calcPREs',labels)
+        assert np.power(precalcPREs-calcPREs,2).sum().sum() < 0.3

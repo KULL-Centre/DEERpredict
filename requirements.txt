@@ -1,5 +1,6 @@
 Cython
-numpy
+numpy==1.16
+pandas
 matplotlib
 scipy
 MDAnalysis
