@@ -27,20 +27,26 @@ class Operations(object):
             tau (float):
             tau_c (float):
         """
+        self.output_prefix = kwargs.get('output_prefix', 'res')
+        self.load_file = kwargs.get('load_file', False)
         self.libname = kwargs.get('libname', 'MTSSL 175K X1X2')
         self.lib = libraries.RotamerLibrary(self.libname)
         self.temp = kwargs.get('temperature', 300)
         self.protein = protein
         self.z_cutoff = kwargs.get('z_cutoff', 0.2)
         self.ign_H = kwargs.get('ign_H', True)
+        self.chains = kwargs.get('chains', [None,None])
 
-    def precalculate_rotamer(self):
-        prot_Ca = self.protein.select_atoms('protein and name CA and resid {0}'.format(self.residue))
-        prot_Co = self.protein.select_atoms('protein and name C and resid {0}'.format(self.residue))
-        prot_N = self.protein.select_atoms('protein and name N and resid {0}'.format(self.residue))
+    def precalculate_rotamer(self, residue, chain):
+        residue_sel = "resid {:d}".format(residue)
+        if chain != None:
+            residue_sel += "and not segid {:d}".format(chain)
+        prot_Ca = self.protein.select_atoms('protein and name CA and '+residue_sel)
+        prot_Co = self.protein.select_atoms('protein and name C and '+residue_sel)
+        prot_N = self.protein.select_atoms('protein and name N and '+residue_sel)
         probe_coords = np.zeros((len(self.lib.top.atoms),1, 3))
         universe = MDAnalysis.Universe(self.lib.top.filename, probe_coords, format=MemoryReader, order='afc')
-        return universe, (prot_Ca, prot_Co, prot_N)
+        return universe, (prot_Ca, prot_Co, prot_N), residue_sel
         
     def rotamer_placement(self, universe, prot_atoms):
         prot_Ca, prot_Co, prot_N = prot_atoms
@@ -65,13 +71,13 @@ class Operations(object):
         universe.load_new(probe_coords, format=MemoryReader, order='afc')
         return universe
 
-    def lj_calculation(self, fitted_rotamers):
+    def lj_calculation(self, fitted_rotamers, residue_sel):
         gas_un = 1.9858775e-3 # CHARMM, in kcal/mol*K
         if self.ign_H:
-            proteinNotSite = self.protein.select_atoms("protein and not type H and not resid {0}".format(self.residue))
+            proteinNotSite = self.protein.select_atoms("protein and "+residue_sel+" and not type H")
             rotamerSel_LJ = fitted_rotamers.select_atoms("not type H and not (name CA or name C or name N or name O)")
         else:
-            proteinNotSite = self.protein.select_atoms("protein and not resid {0}".format(self.residue))
+            proteinNotSite = self.protein.select_atoms("protein and "+residue_sel)
             rotamerSel_LJ = fitted_rotamers.select_atoms("not (name CA or name C or name N or name O)")
             
         eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
@@ -95,9 +101,9 @@ class Operations(object):
             lj_energy_pose[rotamer_counter] = pair_LJ_energy.sum()
         return np.exp(-lj_energy_pose/(gas_un*self.temp))  # for new alignment method
 
-    def rotamerWeights(self, rotamersSite, lib_weights_norm):
+    def rotamerWeights(self, rotamersSite, lib_weights_norm, residue_sel):
         # Calculate Boltzmann weights
-        boltz = self.lj_calculation(rotamersSite)
+        boltz = self.lj_calculation(rotamersSite, residue_sel)
         # Set to zero Boltzmann weights that are NaN
         boltz[np.isnan(boltz)] = 0.0
 
@@ -105,7 +111,7 @@ class Operations(object):
         boltz = lib_weights_norm * boltz
         return boltz, np.nansum(boltz)
 
-    def rotamerAnalysis(self, rotamersSite, boltzmann_weights_norm):
+    def rotamerPREanalysis(self, rotamersSite, boltzmann_weights_norm, residue_sel):
         # Select atoms for distance calculations
         rotamer_nitrogen = rotamersSite.select_atoms("name N1")
         rotamer_oxigen = rotamersSite.select_atoms("name O1")
@@ -114,8 +120,7 @@ class Operations(object):
         oxi_pos = np.array([rotamer_oxigen.positions for x in rotamersSite.trajectory])
         nitro_pos = (nit_pos + oxi_pos) / 2
         # Positions of the backbone nitrogen atoms
-        amide_pos = self.protein.select_atoms(
-            "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
+        amide_pos = self.protein.select_atoms(self.measured_sel).positions
         # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
         n_probe_vector = nitro_pos - amide_pos
         # Distances between nitroxide and amide groups

@@ -24,7 +24,7 @@ import DEERpredict.libraries
 
 logger = logging.getLogger("MDAnalysis.app")
 
-class FRETPrediction(Operations):
+class FRETpredict(Operations):
     """Calculation of FRET signal between two chromophores."""
 
     def __init__(self, protein_structure, residues, record_frames=False, **kwargs):

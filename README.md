@@ -26,7 +26,7 @@ Or clone the repo:
 
 ```bash
   git clone https://github.com/KULL-Centre/DEERpredict.git
-  cd deepredict
+  cd DEERpredict
 
   pip install -e . 
 ```
