@@ -6,10 +6,11 @@ import numpy as np
 from DEERpredict.PRE import PREpredict
 import pandas as pd
 
-def load_precalcPREs(path,labels,tau_c):
+def load_precalcPREs(path,labels,tau_c,Cbeta):
+    CB = '_CB' if Cbeta else ''
     data = {}
     for label in labels:
-        resnums, data[label] = np.loadtxt(path+'/PRE_1nti_{:g}-{:d}_CB.dat'.format(tau_c,label),unpack=True)
+        resnums, data[label] = np.loadtxt(path+'/PRE_1nti_{:g}-{:d}{:s}.dat'.format(tau_c,label,CB),unpack=True)
     df = pd.DataFrame(data,index=resnums)
     df.rename_axis('residue', inplace=True)
     df.rename_axis('label', axis='columns',inplace=True)
@@ -37,10 +38,11 @@ def test_PRE():
         os.mkdir('tests/data/ACBP/calcPREs')
     u = MDAnalysis.Universe('tests/data/ACBP/1nti.pdb')
     labels = [17,36,46,65,86]
-    for tau_c in [0.1,1]: 
-        tau_t = tau_c if tau_c < 0.5 else 0.5
-        for label in labels:
-            calcIratio('tests/data/ACBP',tau_c,[u, label, tau_t, 12.6, True])
-        resnums, precalcPREs = load_precalcPREs('tests/data/ACBP/precalcPREs',labels,tau_c)
-        resnums, calcPREs = load_calcPREs('tests/data/ACBP/calcPREs',labels)
+    for Cbeta in [True,False]:
+        for tau_c in [0.1,1]: 
+            tau_t = tau_c if tau_c < 0.5 else 0.5
+            for label in labels:
+                calcIratio('tests/data/ACBP',tau_c,[u, label, tau_t, 12.6, Cbeta])
+            resnums, precalcPREs = load_precalcPREs('tests/data/ACBP/precalcPREs',labels,tau_c,Cbeta)
+            resnums, calcPREs = load_calcPREs('tests/data/ACBP/calcPREs',labels)
         assert np.power(precalcPREs-calcPREs,2).sum().sum() < 0.3

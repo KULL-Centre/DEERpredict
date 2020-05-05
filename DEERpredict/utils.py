@@ -36,11 +36,13 @@ class Operations(object):
         self.z_cutoff = kwargs.get('z_cutoff', 0.2)
         self.ign_H = kwargs.get('ign_H', True)
         self.chains = kwargs.get('chains', [None,None])
+        # Weights for each frame
+        self.weights = kwargs.get('weights', False)
 
     def precalculate_rotamer(self, residue, chain):
         residue_sel = "resid {:d}".format(residue)
-        if chain != None:
-            residue_sel += "and not segid {:d}".format(chain)
+        if type(chain) == str:
+            residue_sel += " and segid {:s}".format(chain)
         prot_Ca = self.protein.select_atoms('protein and name CA and '+residue_sel)
         prot_Co = self.protein.select_atoms('protein and name C and '+residue_sel)
         prot_N = self.protein.select_atoms('protein and name N and '+residue_sel)
@@ -74,10 +76,10 @@ class Operations(object):
     def lj_calculation(self, fitted_rotamers, residue_sel):
         gas_un = 1.9858775e-3 # CHARMM, in kcal/mol*K
         if self.ign_H:
-            proteinNotSite = self.protein.select_atoms("protein and "+residue_sel+" and not type H")
+            proteinNotSite = self.protein.select_atoms("protein and not type H and not "+residue_sel)
             rotamerSel_LJ = fitted_rotamers.select_atoms("not type H and not (name CA or name C or name N or name O)")
         else:
-            proteinNotSite = self.protein.select_atoms("protein and "+residue_sel)
+            proteinNotSite = self.protein.select_atoms("protein and not "+residue_sel)
             rotamerSel_LJ = fitted_rotamers.select_atoms("not (name CA or name C or name N or name O)")
             
         eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
@@ -111,7 +113,7 @@ class Operations(object):
         boltz = lib_weights_norm * boltz
         return boltz, np.nansum(boltz)
 
-    def rotamerPREanalysis(self, rotamersSite, boltzmann_weights_norm, residue_sel):
+    def rotamerPREanalysis(self, rotamersSite, boltzmann_weights_norm):
         # Select atoms for distance calculations
         rotamer_nitrogen = rotamersSite.select_atoms("name N1")
         rotamer_oxigen = rotamersSite.select_atoms("name O1")

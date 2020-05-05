@@ -36,17 +36,13 @@ class PREpredict(Operations):
         self.wh = 2*np.pi*1e6*kwargs.get('wh', 700.0)
         self.k = kwargs.get('k', 1.23e16)
         self.t = kwargs.get('delay', 10.0e-3)
-        # Weights for each frame
-        self.weights = kwargs.get('weights', False)
         # Approximate electron position at Cbeta
         self.Cbeta = kwargs.get('Cbeta', False)
         self.atom_selection = kwargs.get('atom_selection', 'N')
         self.resnums = np.array(protein.select_atoms('name N and protein').resnums)
-        self.measured_sel = 'name {:s} and not resid {:d} and not resid 1 ' \
-                            'and not resname PRO'.format(self.atom_selection, residue)
+        self.measured_sel = 'name {:s} and not resid {:d} and not resid 1 and not resname PRO'.format(self.atom_selection, residue)
         if type(self.chains[0]) == str:
-            self.measured_sel = 'name {:s} and not (resid {:d} and segid {:s}) and not resid 1 ' \
-                                'and not resname PRO'.format(self.atom_selection, self.chains[0], residue)
+            self.measured_sel = 'name {:s} and not (resid {:d} and segid {:s}) and not resid 1 and not resname PRO'.format(self.atom_selection, residue, self.chains[0])
         if type(self.chains[1]) == str:
             self.measured_sel += ' and segid {:s}'.format(self.chains[1])
         self.measured_resnums = np.array(protein.select_atoms(self.measured_sel).resnums)
@@ -77,8 +73,7 @@ class PREpredict(Operations):
                 continue
             boltzmann_weights_norm = boltz / z
             # Calculate interaction distances and squared angular components of the order parameter
-            r3[frame_ndx], r6[frame_ndx], angular[frame_ndx] = self.rotamerPREanalysis(rotamersSite,
-                                                                                boltzmann_weights_norm, residue_sel)
+            r3[frame_ndx], r6[frame_ndx], angular[frame_ndx] = self.rotamerPREanalysis(rotamersSite, boltzmann_weights_norm)
         # Saving analysis as a pickle file
         data = pd.Series({'r3':r3.astype(np.float32), 'r6':r6.astype(np.float32), 'angular':angular.astype(np.float32)})
         data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')
@@ -90,12 +85,14 @@ class PREpredict(Operations):
         r3 = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
         r6 = np.full(r3.shape, np.nan)
         angular = np.full(r3.shape, np.nan)
+        residue_sel = "resid {:d}".format(self.residue)
+        if type(self.chains[0]) == str:
+            residue_sel += " and segid {:s}".format(self.chains[0])
         for frame_ndx, _ in enumerate(self.protein.trajectory):
             # Positions of the Cbeta atom of the spin-labeled residue
-            spin_labeled_Cbeta = self.protein.select_atoms("protein and name CB and resid {:d}".format(self.residue)).positions
+            spin_labeled_Cbeta = self.protein.select_atoms("protein and name CB and "+residue_sel).positions
             # Positions of the backbone nitrogen atoms
-            amide_pos = self.protein.select_atoms(
-                "name {} and not resid {} and not resid 1 and not resname PRO".format(self.atom_selection, self.residue)).positions
+            amide_pos = self.protein.select_atoms(self.measured_sel).positions
             # Distances between nitroxide and amide groups
             dists_array_r = np.linalg.norm(spin_labeled_Cbeta - amide_pos,axis=1)
             r6[frame_ndx] = np.power(dists_array_r,-6)
