@@ -4,6 +4,7 @@ pandas
 matplotlib
 scipy
 MDAnalysis
+h5py
 pyyaml
 sphinx
 recommonmark

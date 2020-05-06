@@ -69,6 +69,7 @@ class DEERpredict(Operations):
         self.nr = 501
         sig = 0.1
         self.rax = np.linspace(self.ra, self.re, self.nr)
+        self.tax = np.linspace(0.01, 4, 512)
         self.vari = np.exp(-(self.rax/sig)**2)
         self.Calpha = False
         if len(residues) != 2:
@@ -118,7 +119,9 @@ class DEERpredict(Operations):
             # Distances between nitroxide groups
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
             dists_array = np.round((self.nr * (dists_array - self.ra)) / (self.re - self.ra)).astype(int).flatten()
-            distributions[frame_ndx] = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size)
+            distribution = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size) 
+            distribution /= distribution.sum()
+            distributions[frame_ndx] = distribution
         return data
 
     def save(self,data):
@@ -135,11 +138,17 @@ class DEERpredict(Operations):
             logging.info('Weights argument should be a numpy array')
             raise ValueError('Weights argument should be a numpy array')
         distribution = np.nansum(distributions*self.weights, 0)
+        distribution /= np.sum(distribution)
         frame_inv_distr = np.fft.ifft(distribution) * np.fft.ifft(self.vari)
         smoothed = np.real(np.fft.fft(frame_inv_distr))
+        smoothed /= np.sum(smoothed)
         np.savetxt(self.output_prefix + '-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
-                   np.c_[self.rax, smoothed/np.sum(smoothed), distribution/np.sum(distribution)],
-                   header='distance distribution')
+                np.c_[self.rax[100:401], smoothed[200:], distribution[200:]],
+                   header='distance smoothed_distribution distribution')
+        time_domain_smoothed = self.calcTimeDomain(self.tax, self.rax[100:401], smoothed[200:])
+        np.savetxt(self.output_prefix + '-{:d}-{:d}_time-domain.dat'.format(self.residues[0], self.residues[1]),
+                   np.c_[self.tax, time_domain_smoothed],
+                   header='time smoothed_V')
 
     def run(self):
         if self.load_file:

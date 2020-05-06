@@ -14,6 +14,7 @@ from MDAnalysis.coordinates.memory import MemoryReader
 from DEERpredict.lennardjones import vdw, p_Rmin2, eps
 import DEERpredict.libraries as libraries
 import logging
+import scipy.special as special
 
 class Operations(object):
     """Calculation of the distance profile between a probe and backbone amide."""
@@ -152,3 +153,22 @@ class Operations(object):
     def calc_gamma_2_Cbeta(dist_r6, tau_c, wh, k):
         j = lambda w : tau_c / (1+(w*tau_c)**2)
         return k*dist_r6*(4*j(0) + 3*j(wh))
+
+    @staticmethod
+    def calcTimeDomain(t, r, p):
+        dr = r[2] - r[1]
+        r[0] = 1e-20 if r[0] == 0 else r[0]
+        lambda1 = 0.6
+        mu_0 = 1.2566370614e-6  # {SI} T m A^-1
+        mu_B = 9.27400968e-24   # {SI} J T^-1
+        g = 2.0023              # unitless
+        hbar = 1.054571800e-34  # {SI} J s
+        cnst = mu_0 * np.power(mu_B, 2) * np.power(g, 2) * 0.25 / np.pi / hbar
+        w = cnst / np.power(r, 3)
+        Z = np.sqrt(6 * w * t.reshape(-1,1) / np.pi)
+        fsin, fcos = special.fresnel(Z)
+        K = fcos * fsin * np.cos(w*t.reshape(-1,1)) * np.sin(w*t.reshape(-1,1)) * dr / Z**2
+        S = np.dot(K, p)
+        S /= S.max()
+        F = 1 + lambda1 * (S-1)
+        return F * np.exp(-t)
