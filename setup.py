@@ -17,11 +17,9 @@ with open(path.join(here, 'requirements.txt')) as f:
 install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' not in x]
 
-
 def read(*parts):
     # intentionally *not* adding an encoding option to open
     return codecs.open(path.join(here, *parts), 'r').read()
-
 
 def find_version(*file_paths):
     version_file = read(*file_paths)
@@ -31,11 +29,10 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-
 setup(
     name='DEERpredict',
     version=find_version('DEERpredict', '__init__.py'),
-    description='A package for DEER prediction over molecular dynamics ensembles. Can be installed with pip.',
+    description='A package for DEER and PRE predictions based on molecular dynamics ensembles. Can be installed with pip.',
     long_description=long_description,
     url='https://github.com/KULL-Centre/DEERpredict',
     license='GPLv3',
@@ -54,9 +51,8 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='João Martins & Ramon Crehuet',
+    author='João Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
     install_requires=install_requires,
     depedency_links=dependency_links,
-    scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict'],
-#    author_email='joao.martins@bio.ku.dk'
+    scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict']
 )
