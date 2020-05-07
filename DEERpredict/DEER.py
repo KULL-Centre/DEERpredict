@@ -71,7 +71,6 @@ class DEERpredict(Operations):
         self.rax = np.linspace(self.ra, self.re, self.nr)
         self.tax = np.linspace(0.01, 5, 512)
         self.vari = np.exp(-(self.rax/sig)**2)
-        self.Calpha = False
         if len(residues) != 2:
             raise ValueError("The residue_list must contain exactly 2 "
                              "residue numbers: current value {0}.".format(residues))
@@ -144,7 +143,7 @@ class DEERpredict(Operations):
         smoothed = np.real(np.fft.fft(frame_inv_distr))
         smoothed /= np.sum(smoothed)
         np.savetxt(self.output_prefix + '-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
-                np.c_[self.rax[100:401], smoothed[200:], distribution[200:]],
+                np.c_[self.rax[100:401], smoothed[200:]],
                    header='distance smoothed_distribution distribution')
         time_domain_smoothed = self.calcTimeDomain(self.tax, self.rax[100:401], smoothed[200:])
         np.savetxt(self.output_prefix + '-{:d}-{:d}_time-domain.dat'.format(self.residues[0], self.residues[1]),
@@ -161,8 +160,5 @@ class DEERpredict(Operations):
                 raise FileNotFoundError('File {} not found!'.format(self.load_file))
             self.save(self.load_file)    
         else:
-            if self.Calpha:
-                self.trajectoryAnalysis()
-            else:
-                self.trajectoryAnalysis()
+            self.trajectoryAnalysis()
             self.save(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]))

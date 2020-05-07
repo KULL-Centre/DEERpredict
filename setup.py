@@ -51,9 +51,8 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='João Martins, Ramon Crehuet and Giulio Tesei',
+    author='João Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
     install_requires=install_requires,
     depedency_links=dependency_links,
-    scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict'],
-    author_email='giulio.tesei@bio.ku.dk'
+    scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict']
 )

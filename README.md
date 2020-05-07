@@ -11,7 +11,7 @@ Authors: [João Martins (@joaommartins)](https://github.com/joaommartins), [Mich
 Overview
 --------
 
-A package for double electron-electron resonance (DEER), paramagnetic relaxation enhancement (PRE) and Förster resonance energy transfer prediction from molecular dynamics ensembles. Can be installed with pip.
+A package for double electron-electron resonance (DEER), paramagnetic relaxation enhancement (PRE) and Förster resonance energy transfer (FRET) prediction from molecular dynamics ensembles. Can be installed with pip.
 
 Installation / Usage
 --------------------
