@@ -2,26 +2,22 @@ DEERpredict
 ===========
 
 version number: 0.2.0
-author: João Martins, Ramon Crehuet
+authors: [João Martins (@joaommartins)](https://github.com/joaommartins), [Micha BA Kunze (@mbakunze)](https://github.com/mbakunze) , [Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet)
 
 Overview
 --------
 
-A package for DEER prediction over molecular dynamics ensembles. Can be installed with pip.
+A package for double electron-electron resonance (DEER) and paramagnetic relaxation enhancement (PRE) prediction over molecular dynamics ensembles. Can be installed with pip.
 
 Installation / Usage
 --------------------
 
 To install use pip:
 
-.. code:: bash
-
     $ pip install DEERpredict
 
 
 Or clone the repo:
-
-.. code:: bash
 
     $ git clone https://github.com/KULL-Centre/DEERpredict.git
     $ cd deepredict
@@ -37,8 +33,6 @@ Example
 -------
 
 Testing
-
-.. code:: bash
 
     $ cd deepredict
     $ python -m pytest
