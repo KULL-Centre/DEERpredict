@@ -69,7 +69,7 @@ class DEERpredict(Operations):
         self.nr = 501
         sig = 0.1
         self.rax = np.linspace(self.ra, self.re, self.nr)
-        self.tax = np.linspace(0.01, 4, 512)
+        self.tax = np.linspace(0.01, 5, 512)
         self.vari = np.exp(-(self.rax/sig)**2)
         self.Calpha = False
         if len(residues) != 2:
@@ -79,9 +79,9 @@ class DEERpredict(Operations):
     def trajectoryAnalysis(self):
         logging.info("Starting rotamer distance analysis of trajectory {:s} with labeled residues "
                      "{:d} and {:d}".format(self.protein.trajectory.filename, self.residues[0], self.residues[1]))
-        data = h5py.File(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]), "w")
-        distributions = data.create_dataset("distributions",
-                            (self.protein.trajectory.n_frames, self.rax.size), fillvalue=0, compression="gzip")
+        f = h5py.File(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]), "w")
+        distributions = f.create_dataset("distributions",
+                (self.protein.trajectory.n_frames, self.rax.size), fillvalue=0, compression="gzip")
         lib_weights_norm = self.lib.weights / np.sum(self.lib.weights)
         rotamer1, prot_atoms1, residue_sel1 = self.precalculate_rotamer(self.residues[0], self.chains[0])
         rotamer2, prot_atoms2, residue_sel2 = self.precalculate_rotamer(self.residues[1], self.chains[1])
@@ -122,10 +122,11 @@ class DEERpredict(Operations):
             distribution = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size) 
             distribution /= distribution.sum()
             distributions[frame_ndx] = distribution
-        return data
+        f.close()
 
-    def save(self,data):
-        distributions = data['distributions']
+    def save(self,filename):
+        f = h5py.File(filename, "r")
+        distributions = f.get('distributions')
         if isinstance(self.weights, np.ndarray):
             if self.weights.size != distributions.shape[0]:
                     logging.info('Weights array has size {} whereas the number of frames is {}'.
@@ -133,11 +134,11 @@ class DEERpredict(Operations):
                     raise ValueError('Weights array has size {} whereas the number of frames is {}'.
                             format(self.weights.size, distributions.shape[0]))
         elif self.weights == False:
-            self.weights = np.ones(data['distributions'].shape[0])
+            self.weights = np.ones(distributions.shape[0])
         else:
             logging.info('Weights argument should be a numpy array')
             raise ValueError('Weights argument should be a numpy array')
-        distribution = np.nansum(distributions*self.weights, 0)
+        distribution = np.nansum(distributions*self.weights.reshape(-1,1), 0)
         distribution /= np.sum(distribution)
         frame_inv_distr = np.fft.ifft(distribution) * np.fft.ifft(self.vari)
         smoothed = np.real(np.fft.fft(frame_inv_distr))
@@ -149,6 +150,7 @@ class DEERpredict(Operations):
         np.savetxt(self.output_prefix + '-{:d}-{:d}_time-domain.dat'.format(self.residues[0], self.residues[1]),
                    np.c_[self.tax, time_domain_smoothed],
                    header='time smoothed_V')
+        f.close()
 
     def run(self):
         if self.load_file:
@@ -157,10 +159,10 @@ class DEERpredict(Operations):
             else:
                 logging.info('File {} not found!'.format(self.load_file))
                 raise FileNotFoundError('File {} not found!'.format(self.load_file))
-            data = h5py.File('mytestfile.hdf5', 'r')
+            self.save(self.load_file)    
         else:
             if self.Calpha:
-                data = self.trajectoryAnalysis()
+                self.trajectoryAnalysis()
             else:
-                data = self.trajectoryAnalysis()
-        self.save(data)
+                self.trajectoryAnalysis()
+            self.save(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]))

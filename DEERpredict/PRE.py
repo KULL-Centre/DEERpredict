@@ -44,11 +44,13 @@ class PREpredict(Operations):
         if type(self.chains[0]) == str:
             self.measured_sel = 'name {:s} and not (resid {:d} and segid {:s}) and not resid 1 and not resname PRO'.format(self.atom_selection, residue, self.chains[0])
         if type(self.chains[1]) == str:
+            self.resnums = np.array(protein.select_atoms('name N and protein and segid {:s}'.format(self.chains[1])).resnums)
             self.measured_sel += ' and segid {:s}'.format(self.chains[1])
         self.measured_resnums = np.array(protein.select_atoms(self.measured_sel).resnums)
+        _, self.measured_resnums, _ = np.intersect1d(self.resnums,self.measured_resnums,return_indices=True)
         # Diamagnetic transverse relaxation rate
         self.r_2 = np.full(self.resnums.size, fill_value=np.NaN)
-        self.r_2[self.measured_resnums - 1] = kwargs.get('r_2', 10.0)
+        self.r_2[self.measured_resnums] = kwargs.get('r_2', 10.0)
 
     def trajectoryAnalysis(self):
         logging.info("Starting rotamer distance analysis of trajectory {:s} "
@@ -121,7 +123,7 @@ class PREpredict(Operations):
         # Transverse relaxation rate enhancement due to the presence of the unpaired electron
         gamma_2 = np.full(self.resnums.size, fill_value=np.NaN)
         if (self.Cbeta):
-            gamma_2[self.measured_resnums - 1] = self.calc_gamma_2_Cbeta(r6_av, self.tau_c, self.wh, self.k)
+            gamma_2[self.measured_resnums] = self.calc_gamma_2_Cbeta(r6_av, self.tau_c, self.wh, self.k)
         else:
             # Weighted averages of r^-3
             r3_av = np.ma.MaskedArray(data['r3'], mask=np.isnan(data['r3']))
@@ -129,7 +131,7 @@ class PREpredict(Operations):
             # Weighted averages of the squared angular component of the order parameter
             angular_av = np.ma.MaskedArray(data['angular'], mask=np.isnan(data['angular']))
             angular_av = np.ma.average(angular_av, weights=self.weights, axis=0).data
-            gamma_2[self.measured_resnums - 1] = self.calc_gamma_2(r6_av, r3_av, self.tau_c, self.tau_t, self.wh, self.k, angular_av)
+            gamma_2[self.measured_resnums] = self.calc_gamma_2(r6_av, r3_av, self.tau_c, self.tau_t, self.wh, self.k, angular_av)
         # Paramagnetic / diamagnetic intensity ratio
         i_ratio = self.r_2 * np.exp(-gamma_2 * self.t) / ( self.r_2 + gamma_2 )
         np.savetxt(self.output_prefix+'-{}.dat'.format(self.residue),np.c_[self.resnums,i_ratio,gamma_2],header='residue i_ratio gamma_2')

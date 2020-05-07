@@ -156,7 +156,6 @@ class Operations(object):
 
     @staticmethod
     def calcTimeDomain(t, r, p):
-        dr = r[2] - r[1]
         r[0] = 1e-20 if r[0] == 0 else r[0]
         lambda1 = 0.6
         mu_0 = 1.2566370614e-6  # {SI} T m A^-1
@@ -164,10 +163,10 @@ class Operations(object):
         g = 2.0023              # unitless
         hbar = 1.054571800e-34  # {SI} J s
         cnst = mu_0 * np.power(mu_B, 2) * np.power(g, 2) * 0.25 / np.pi / hbar
-        w = cnst / np.power(r, 3)
-        Z = np.sqrt(6 * w * t.reshape(-1,1) / np.pi)
+        w = cnst / np.power(r, 3) * 1e27 # convert nm/s to m/s
+        Z = np.sqrt(6 * w * t.reshape(-1,1) * 1e-6 / np.pi) 
         fsin, fcos = special.fresnel(Z)
-        K = fcos * fsin * np.cos(w*t.reshape(-1,1)) * np.sin(w*t.reshape(-1,1)) * dr / Z**2
+        K = ( fcos * np.cos(w*t.reshape(-1,1)*1e-6) + fsin * np.sin(w*t.reshape(-1,1)*1e-6) ) / Z
         S = np.dot(K, p)
         S /= S.max()
         F = 1 + lambda1 * (S-1)

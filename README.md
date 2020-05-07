@@ -6,12 +6,12 @@ DEERpredict
 
 Version 0.0.1
 
-Authors: João Martins, Ramon Crehuet, Giulio Tesei
+Authors: [João Martins (@joaommartins)](https://github.com/joaommartins), [Micha BA Kunze (@mbakunze)](https://github.com/mbakunze) , [Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet), [Giulio Tesei (@gitesei)](https://github.com/gitesei)
 
 Overview
 --------
 
-A package for DEER, FRET and PRE prediction based on  molecular dynamics ensembles. Can be installed with pip.
+A package for double electron-electron resonance (DEER), paramagnetic relaxation enhancement (PRE) and Förster resonance energy transfer prediction from molecular dynamics ensembles. Can be installed with pip.
 
 Installation / Usage
 --------------------
