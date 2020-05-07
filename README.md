@@ -4,7 +4,7 @@
 DEERpredict
 ===========
 
-Version 0.0.1
+Version 0.2.0
 
 Authors: [João Martins (@joaommartins)](https://github.com/joaommartins), [Micha BA Kunze (@mbakunze)](https://github.com/mbakunze) , [Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet), [Giulio Tesei (@gitesei)](https://github.com/gitesei)
 
