@@ -27,11 +27,10 @@ def load_calcPREs(path,labels):
 
 def calcIratio(path,tau_c,args):
     u, label, tau_t, r_2, Cbeta = args
-    PRE = PREpredict(u, label, output_prefix = path+'/calcPREs/res', weights = False,
-          load_file = False, tau_t = tau_t*1e-9, log_file = path+'/calcPREs/log', delay = 10e-3,
-          tau_c = tau_c*1e-09, k = 1.23e16, r_2 = r_2, temperature = 298, Z_cutoff = 0.2, Cbeta = Cbeta,
-          atom_selection = 'H', wh = 750)
-    PRE.run()
+    PRE = PREpredict(u, label, log_file = path+'/log',
+          temperature = 298, Z_cutoff = 0.2, Cbeta = Cbeta, atom_selection = 'H')
+    PRE.run(output_prefix = path+'/calcPREs/res', tau_c = tau_c*1e-09, tau_t = tau_t*1e-9,
+            k = 1.23e16, r_2 = r_2, wh = 750, delay = 10e-3)
 
 def test_PRE():
     if not os.path.isdir('tests/data/ACBP/calcPREs'):

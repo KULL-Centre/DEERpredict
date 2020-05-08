@@ -23,19 +23,11 @@ class PREpredict(Operations):
         Args:
             protein (:py:class:`MDAnalysis.core.universe.Universe`): trajectory
             residue (int): residue labeled with the paramagnetic probe
-        :Keywords:
-            tau_c (float):
-            tau_t (float):
         """
         Operations.__init__(self, protein, **kwargs)
         self.residue = residue
         #  Class specific instance attributes
         logging.basicConfig(filename=kwargs.get('log_file', 'log'),level=logging.INFO)
-        self.tau_c = kwargs.get('tau_c', 1.0e-9)
-        self.tau_t = kwargs.get('tau_t', 5.0e-10)  
-        self.wh = 2*np.pi*1e6*kwargs.get('wh', 700.0)
-        self.k = kwargs.get('k', 1.23e16)
-        self.t = kwargs.get('delay', 10.0e-3)
         # Approximate electron position at Cbeta
         self.Cbeta = kwargs.get('Cbeta', False)
         self.atom_selection = kwargs.get('atom_selection', 'N')
@@ -48,9 +40,6 @@ class PREpredict(Operations):
             self.measured_sel += ' and segid {:s}'.format(self.chains[1])
         self.measured_resnums = np.array(protein.select_atoms(self.measured_sel).resnums)
         _, self.measured_resnums, _ = np.intersect1d(self.resnums,self.measured_resnums,return_indices=True)
-        # Diamagnetic transverse relaxation rate
-        self.r_2 = np.full(self.resnums.size, fill_value=np.NaN)
-        self.r_2[self.measured_resnums] = kwargs.get('r_2', 10.0)
 
     def trajectoryAnalysis(self):
         logging.info("Starting rotamer distance analysis of trajectory {:s} "
@@ -133,10 +122,24 @@ class PREpredict(Operations):
             angular_av = np.ma.average(angular_av, weights=self.weights, axis=0).data
             gamma_2[self.measured_resnums] = self.calc_gamma_2(r6_av, r3_av, self.tau_c, self.tau_t, self.wh, self.k, angular_av)
         # Paramagnetic / diamagnetic intensity ratio
-        i_ratio = self.r_2 * np.exp(-gamma_2 * self.t) / ( self.r_2 + gamma_2 )
+        i_ratio = self.r_2 * np.exp(-gamma_2 * self.delay) / ( self.r_2 + gamma_2 )
         np.savetxt(self.output_prefix+'-{}.dat'.format(self.residue),np.c_[self.resnums,i_ratio,gamma_2],header='residue i_ratio gamma_2')
 
-    def run(self):
+    def run(self, **kwargs):
+        self.tau_c = kwargs.get('tau_c', 1.0e-9) # rotational tumbling time
+        self.tau_t = kwargs.get('tau_t', 5.0e-10) # internal correlation time 
+        self.wh = 2*np.pi*1e6*kwargs.get('wh', 700.0) # proton Larmor frequency
+        self.k = kwargs.get('k', 1.23e16) 
+        self.delay = kwargs.get('delay', 10.0e-3) # INEPT delay
+        # Diamagnetic transverse relaxation rate
+        self.r_2 = np.full(self.resnums.size, fill_value=np.NaN) # transverse relaxation rate
+        self.r_2[self.measured_resnums] = kwargs.get('r_2', 10.0) # in the diamagnetic molecule
+        # Output
+        self.output_prefix = kwargs.get('output_prefix', 'res')
+        # Input
+        self.load_file = kwargs.get('load_file', False)
+        # Weights for each frame
+        self.weights = kwargs.get('weights', False)
         if self.load_file:
             if os.path.isfile(self.load_file):
                 logging.info('Loading pre-computed data from {} - will not load trajectory file.'.format(self.load_file))

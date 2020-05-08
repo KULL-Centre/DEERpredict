@@ -21,8 +21,6 @@ import logging
 # Inner imports
 from DEERpredict.utils import Operations
 
-logger = logging.getLogger("MDAnalysis.app")
-
 class DEERpredict(Operations):
     """Calculation of distance distributions between two spin labels."""
 
@@ -32,8 +30,6 @@ class DEERpredict(Operations):
         Args:
             protein_structure (:py:class:`MDAnalysis.core.universe.Universe`):
             residues (list(:py:class:`str`)):
-        :Keywords:
-
         """
         # """RotamerDistances(universe, residue_list, **kwargs)
         #
@@ -59,9 +55,8 @@ class DEERpredict(Operations):
         #         """
         Operations.__init__(self, protein, **kwargs)
 
-        # loads all args and kwargs
-        self.form_factor = kwargs.get('form_factor', False)  # back-calculate final experimental form factor
         self.residues = residues
+        logging.basicConfig(filename=kwargs.get('log_file', 'log'),level=logging.INFO)
 
         # fourier broadening parameters
         self.ra = -5
@@ -151,7 +146,13 @@ class DEERpredict(Operations):
                    header='time smoothed_V')
         f.close()
 
-    def run(self):
+    def run(self, **kwargs):
+        # Output
+        self.output_prefix = kwargs.get('output_prefix', 'res')
+        # Input
+        self.load_file = kwargs.get('load_file', False)
+        # Weights for each frame
+        self.weights = kwargs.get('weights', False)
         if self.load_file:
             if os.path.isfile(self.load_file):
                 logging.info('Loading pre-computed data from {} - will not load trajectory file.'.format(self.load_file))

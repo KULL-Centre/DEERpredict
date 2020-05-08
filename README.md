@@ -31,10 +31,11 @@ Or clone the repo:
   pip install -e . 
 ```
     
-Contributing
+Documentation
 ------------
 
-TBD
+[![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest&style=for-the-badge)](https://deerpredict.readthedocs.io/en/latest/?badge=latest)
+
 
 Example
 -------

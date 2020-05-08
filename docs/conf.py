@@ -15,8 +15,8 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 project = 'DEERpredict'
-copyright = '2020, João Martins, Ramon Crehuet, Giulio Tesei'
-author = 'João Martins, Ramon Crehuet, Giulio Tesei'
+copyright = '2020, João Martins, Micha BA Kunze, Ramon Crehuet, Giulio Tesei'
+author = 'João Martins,  Micha BA Kunze, Ramon Crehuet, Giulio Tesei'
 release = '0.0.1'
 source_suffix = ['.rst', '.md']
 master_doc = 'index'

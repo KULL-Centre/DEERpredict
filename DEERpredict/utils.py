@@ -23,22 +23,14 @@ class Operations(object):
         """
         Args:
             protein (:py:class:`MDAnalysis.core.universe.Universe`): trajectory
-            residue (int): residue labeled with the paramagnetic probe
-        :Keywords:
-            tau (float):
-            tau_c (float):
         """
-        self.output_prefix = kwargs.get('output_prefix', 'res')
-        self.load_file = kwargs.get('load_file', False)
+        self.protein = protein
         self.libname = kwargs.get('libname', 'MTSSL 175K X1X2')
         self.lib = libraries.RotamerLibrary(self.libname)
         self.temp = kwargs.get('temperature', 300)
-        self.protein = protein
         self.z_cutoff = kwargs.get('z_cutoff', 0.2)
         self.ign_H = kwargs.get('ign_H', True)
         self.chains = kwargs.get('chains', [None,None])
-        # Weights for each frame
-        self.weights = kwargs.get('weights', False)
 
     def precalculate_rotamer(self, residue, chain):
         residue_sel = "resid {:d}".format(residue)
