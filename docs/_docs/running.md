@@ -61,5 +61,15 @@ DEER = DEERpredict(MDAnalysis.Universe('3BVB.pdb'), residues = [55, 55], chains=
 DEER.run(output_prefix = 'res')
 ~~~
 
-DEERpredict generates `res-55-55.dat` containing the smoothed distance distribution and `res-55-55_time_domain.dat` containing the intensity-normalized time-domain DEER data.
+DEERpredict generates `res-55-55.dat` containing the smoothed distance distribution and `res-55-55_time_domain.dat` containing the time-domain 
+DEER data (Eq. 3 in DOI: 10.1126/sciadv.aat5218).
 Per-frame distance distributions are saved to the hdf5 file 'res-55-55.hdf5' making it possible to quickly reweight the data as shown above for PREpredict.
+The function to back-calculate the time-domain data from a distance distribution can also be accessed externally from the `Operations` class.
+
+~~~ python
+from DEERpredict.utils import Operations
+
+r, p = np.loadtxt('res-55-55.dat', unpack=True)
+t = np.linspace(0.01, 5.5, 512)
+dt = Operations.calcTimeDomain(t,r,p)
+~~~

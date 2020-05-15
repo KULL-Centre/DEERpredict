@@ -64,7 +64,7 @@ class DEERpredict(Operations):
         self.nr = 501
         sig = 0.1
         self.rax = np.linspace(self.ra, self.re, self.nr)
-        self.tax = np.linspace(0.01, 5, 512)
+        self.tax = np.linspace(0.01, 5.5, 512)
         self.vari = np.exp(-(self.rax/sig)**2)
         if len(residues) != 2:
             raise ValueError("The residue_list must contain exactly 2 "
@@ -90,8 +90,8 @@ class DEERpredict(Operations):
             # straight polyhach
             boltz1, z1 = self.rotamerWeights(rotamersSite1, lib_weights_norm, residue_sel1)
             boltz2, z2 = self.rotamerWeights(rotamersSite2, lib_weights_norm, residue_sel2)
-            # if (z1 <= self.z_cutoff) or (z2 <= self.z_cutoff):
-            #     continue
+            if (z1 <= self.z_cutoff) or (z2 <= self.z_cutoff):
+                 continue
             boltzmann_weights_norm1 = boltz1 / z1
             boltzmann_weights_norm2 = boltz2 / z2
             boltzmann_weights_norm =  boltzmann_weights_norm1.reshape(-1,1) * boltzmann_weights_norm2
@@ -114,7 +114,6 @@ class DEERpredict(Operations):
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
             dists_array = np.round((self.nr * (dists_array - self.ra)) / (self.re - self.ra)).astype(int).flatten()
             distribution = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size) 
-            distribution /= distribution.sum()
             distributions[frame_ndx] = distribution
         f.close()
 
@@ -133,10 +132,9 @@ class DEERpredict(Operations):
             logging.info('Weights argument should be a numpy array')
             raise ValueError('Weights argument should be a numpy array')
         distribution = np.nansum(distributions*self.weights.reshape(-1,1), 0)
-        distribution /= np.sum(distribution)
         frame_inv_distr = np.fft.ifft(distribution) * np.fft.ifft(self.vari)
         smoothed = np.real(np.fft.fft(frame_inv_distr))
-        smoothed /= np.sum(smoothed)
+        smoothed /= np.trapz(smoothed, self.rax)
         np.savetxt(self.output_prefix + '-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
                 np.c_[self.rax[100:401], smoothed[200:]],
                    header='distance smoothed_distribution distribution')
