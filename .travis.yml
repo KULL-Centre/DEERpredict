@@ -1,17 +1,13 @@
 language: python
 dist: xenial
 python:
-  - 3.5
   - 3.6
   - 3.7
+  - 3.8
 before_install:
   - python --version
   - pip install -U pip
   - pip install -U pytest
 install:
-  - pip install codecov
   - pip install -e .
 script: pytest # run tests
-after_success:
-  - coverage combine
-  - codecov # submit coverage

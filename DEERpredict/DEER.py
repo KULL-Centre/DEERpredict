@@ -137,11 +137,11 @@ class DEERpredict(Operations):
         smoothed /= np.trapz(smoothed, self.rax)
         np.savetxt(self.output_prefix + '-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
                 np.c_[self.rax[100:401], smoothed[200:]],
-                   header='distance smoothed_distribution distribution')
+                   header='distance distribution')
         time_domain_smoothed = self.calcTimeDomain(self.tax, self.rax[100:401], smoothed[200:])
         np.savetxt(self.output_prefix + '-{:d}-{:d}_time-domain.dat'.format(self.residues[0], self.residues[1]),
                    np.c_[self.tax, time_domain_smoothed],
-                   header='time smoothed_V')
+                   header='time d(t)')
         f.close()
 
     def run(self, **kwargs):
