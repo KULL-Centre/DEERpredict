@@ -110,20 +110,17 @@ class PREpredict(Operations):
         r6_av = np.ma.MaskedArray(data['r6'], mask=np.isnan(data['r6']))
         r6_av = np.ma.average(r6_av, weights=self.weights, axis=0).data
         # Transverse relaxation rate enhancement due to the presence of the unpaired electron
-        gamma_2 = np.full(self.resnums.size, fill_value=np.NaN)
+        gamma_2_av = np.full(self.resnums.size, fill_value=np.NaN)
         if (self.Cbeta):
-            gamma_2[self.measured_resnums] = self.calc_gamma_2_Cbeta(r6_av, self.tau_c, self.wh, self.k)
+            gamma_2 = self.calc_gamma_2_Cbeta(data['r6'], self.tau_c, self.wh, self.k)
         else:
-            # Weighted averages of r^-3
-            r3_av = np.ma.MaskedArray(data['r3'], mask=np.isnan(data['r3']))
-            r3_av = np.ma.average(r3_av,  weights=self.weights, axis=0).data
-            # Weighted averages of the squared angular component of the order parameter
-            angular_av = np.ma.MaskedArray(data['angular'], mask=np.isnan(data['angular']))
-            angular_av = np.ma.average(angular_av, weights=self.weights, axis=0).data
-            gamma_2[self.measured_resnums] = self.calc_gamma_2(r6_av, r3_av, self.tau_c, self.tau_t, self.wh, self.k, angular_av)
+            gamma_2 = self.calc_gamma_2(data['r6'], data['r3'], self.tau_c, self.tau_t, self.wh, self.k, data['angular'])
+        # Weighted average of gamma_2 over the conformational ensemble
+        gamma_2 = np.ma.MaskedArray(gamma_2, mask=np.isnan(gamma_2))
+        gamma_2_av[self.measured_resnums] = np.ma.average(gamma_2, weights=self.weights, axis=0).data
         # Paramagnetic / diamagnetic intensity ratio
-        i_ratio = self.r_2 * np.exp(-gamma_2 * self.delay) / ( self.r_2 + gamma_2 )
-        np.savetxt(self.output_prefix+'-{}.dat'.format(self.residue),np.c_[self.resnums,i_ratio,gamma_2],header='residue i_ratio gamma_2')
+        i_ratio = self.r_2 * np.exp(-gamma_2_av * self.delay) / ( self.r_2 + gamma_2_av )
+        np.savetxt(self.output_prefix+'-{}.dat'.format(self.residue),np.c_[self.resnums,i_ratio,gamma_2_av],header='residue i_ratio gamma_2')
 
     def run(self, **kwargs):
         self.tau_c = kwargs.get('tau_c', 1.0e-9) # rotational tumbling time
