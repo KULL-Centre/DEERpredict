@@ -28,7 +28,7 @@ class Operations(object):
         self.libname = kwargs.get('libname', 'MTSSL 175K X1X2')
         self.lib = libraries.RotamerLibrary(self.libname)
         self.temp = kwargs.get('temperature', 300)
-        self.z_cutoff = kwargs.get('z_cutoff', 0.2)
+        self.z_cutoff = kwargs.get('z_cutoff', 0.05)
         self.ign_H = kwargs.get('ign_H', True)
         self.chains = kwargs.get('chains', [None,None])
 
@@ -135,9 +135,7 @@ class Operations(object):
         return r3, r6, angular
 
     @staticmethod
-    def calc_gamma_2(dist_r6, dist_r3, tau_c, tau_t, wh, k, s_ang):
-        s_rad = np.power(dist_r3, 2)/dist_r6
-        s_pre = s_ang*s_rad
+    def calc_gamma_2(dist_r6, s_pre, tau_c, tau_t, wh, k):
         j = lambda w : s_pre*tau_c / (1+(w*tau_c)**2) + (1-s_pre)*tau_t / (1+(w*tau_t)**2)
         return k*dist_r6*(4*j(0) + 3*j(wh))
 

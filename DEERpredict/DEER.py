@@ -79,10 +79,9 @@ class DEERpredict(Operations):
         lib_weights_norm = self.lib.weights / np.sum(self.lib.weights)
         rotamer1, prot_atoms1, residue_sel1 = self.precalculate_rotamer(self.residues[0], self.chains[0])
         rotamer2, prot_atoms2, residue_sel2 = self.precalculate_rotamer(self.residues[1], self.chains[1])
-        # Main calculation loop portion
-        # For each trajectory frame place the probes on the position using rotamer_placement(), calculate
-        # Boltzmann weights based on the Lennard-Jones interactions and calculated the weighted distributions
-        # of probe-probe separations
+        # For each trajectory frame, place the probes at the spin-labeled site using rotamer_placement(), calculate
+        # Boltzmann weights based on Lennard-Jones interactions and calculate weighted distributions of probe-probe separations
+        zarray = np.empty(0) # Array of steric partition functions (sum over Boltzmann weights)
         for frame_ndx, _ in enumerate(self.protein.trajectory):
             # Fit the rotamers onto the protein
             rotamersSite1 = self.rotamer_placement(rotamer1, prot_atoms1)
@@ -90,6 +89,7 @@ class DEERpredict(Operations):
             # straight polyhach
             boltz1, z1 = self.rotamerWeights(rotamersSite1, lib_weights_norm, residue_sel1)
             boltz2, z2 = self.rotamerWeights(rotamersSite2, lib_weights_norm, residue_sel2)
+            zarray = np.append(zarray, [z1,z2])
             if (z1 <= self.z_cutoff) or (z2 <= self.z_cutoff):
                  continue
             boltzmann_weights_norm1 = boltz1 / z1
@@ -116,6 +116,7 @@ class DEERpredict(Operations):
             distribution = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size) 
             distributions[frame_ndx] = distribution
         f.close()
+        np.savetxt(self.output_prefix+'-Z-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),zarray.reshape(-1,2))
 
     def save(self,filename):
         f = h5py.File(filename, "r")
@@ -137,6 +138,9 @@ class DEERpredict(Operations):
         smoothed /= np.trapz(smoothed, self.rax)
         np.savetxt(self.output_prefix + '-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
                 np.c_[self.rax[100:401], smoothed[200:]],
+                   header='distance distribution')
+        np.savetxt(self.output_prefix + '-dist-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
+                np.c_[self.rax, distribution],
                    header='distance distribution')
         time_domain_smoothed = self.calcTimeDomain(self.tax, self.rax[100:401], smoothed[200:])
         np.savetxt(self.output_prefix + '-{:d}-{:d}_time-domain.dat'.format(self.residues[0], self.residues[1]),

@@ -1,12 +1,9 @@
-# DEERpredict API reference
+# DEER-PREdict API reference
 
-The module is composed of three main classes, each for the prediction of different probe-based methods.
-`DEERpredict` performs Double Electron-Electron Resonance predictions,
-`PREpredict` performs Paramagnetic Relaxation Enhancement calculations, and
-`FRETpredict` performs Fluorescence Resonance Energy Transfer calculations.
-
-`Operations` is the base class containing the class attributes to be
-inherited by the calculation classes, as well as common methods to be used by the calculation classes.
+The module has three main classes:
+- `DEERpredict` performs Double Electron-Electron Resonance predictions,
+- `PREpredict` performs Paramagnetic Relaxation Enhancement calculations.
+- `Operations` is the base class containing attributes and methods inherited and used by the calculation classes.
 
 New libraries should be defined in the `DEERpredict.libraries.LIBRARIES` dictionary.
 

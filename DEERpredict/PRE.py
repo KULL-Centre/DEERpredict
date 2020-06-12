@@ -50,6 +50,7 @@ class PREpredict(Operations):
         angular = np.full(r3.shape, np.nan)
         # Pre-process rotamer weights
         lib_weights_norm = self.lib.weights / np.sum(self.lib.weights)
+        zarray = np.empty(0) # Array of steric partition functions (sum over Boltzmann weights)
         # Before getting into this loop, which consumes most of the calculations time
         # we can pre-calculate several objects that do not vary along the loop
         universe, prot_atoms, residue_sel = self.precalculate_rotamer(self.residue, self.chains[0])
@@ -59,6 +60,7 @@ class PREpredict(Operations):
             # Calculate Boltzmann weights
             boltz, z = self.rotamerWeights(rotamersSite, lib_weights_norm, residue_sel)
             # Skip this frame if the sum of the Boltzmann weights is smaller than the cutoff value
+            zarray = np.append(zarray,z)
             if z <= self.z_cutoff:
                 # Store the radius of gyration of tight frames
                 continue
@@ -68,6 +70,7 @@ class PREpredict(Operations):
         # Saving analysis as a pickle file
         data = pd.Series({'r3':r3.astype(np.float32), 'r6':r6.astype(np.float32), 'angular':angular.astype(np.float32)})
         data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')
+        np.savetxt(self.output_prefix+'-Z-{:d}.dat'.format(self.residue),zarray)
         # logging.info('Calculated distances and order parameters are saved to {}.'.format(self.output_prefix+'-{:d}.pkl'.format(residue)))
         return data
 
@@ -106,15 +109,13 @@ class PREpredict(Operations):
         else:
             logging.info('Weights argument should be a numpy array')
             raise ValueError('Weights argument should be a numpy array')
-        # Weighted averages of r^-6
-        r6_av = np.ma.MaskedArray(data['r6'], mask=np.isnan(data['r6']))
-        r6_av = np.ma.average(r6_av, weights=self.weights, axis=0).data
         # Transverse relaxation rate enhancement due to the presence of the unpaired electron
         gamma_2_av = np.full(self.resnums.size, fill_value=np.NaN)
         if (self.Cbeta):
             gamma_2 = self.calc_gamma_2_Cbeta(data['r6'], self.tau_c, self.wh, self.k)
         else:
-            gamma_2 = self.calc_gamma_2(data['r6'], data['r3'], self.tau_c, self.tau_t, self.wh, self.k, data['angular'])
+            s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
+            gamma_2 = self.calc_gamma_2(data['r6'], s_pre, self.tau_c, self.tau_t, self.wh, self.k)
         # Weighted average of gamma_2 over the conformational ensemble
         gamma_2 = np.ma.MaskedArray(gamma_2, mask=np.isnan(gamma_2))
         gamma_2_av[self.measured_resnums] = np.ma.average(gamma_2, weights=self.weights, axis=0).data

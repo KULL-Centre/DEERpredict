@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/gitesei/DEERpredict.svg?branch=master)](https://travis-ci.com/gitesei/DEERpredict)
 [![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io/en/latest/?badge=latest)
 
-DEERpredict
+DEER-PREdict
 ===========
 
 Version 0.2.0
@@ -11,7 +11,7 @@ Authors: [João Martins (@joaommartins)](https://github.com/joaommartins), [Mich
 Overview
 --------
 
-A package for double electron-electron resonance (DEER), paramagnetic relaxation enhancement (PRE) and Förster resonance energy transfer (FRET) prediction from molecular dynamics ensembles. Can be installed with pip.
+A package for double electron-electron resonance (DEER) and paramagnetic relaxation enhancement (PRE) predictions from molecular dynamics ensembles. Can be installed with pip.
 
 Installation / Usage
 --------------------

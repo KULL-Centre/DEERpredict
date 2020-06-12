@@ -11,11 +11,13 @@ from DEERpredict.PRE import PREpredict
 
 u = MDAnalysis.Universe('1nti.pdb')
 PRE = PREpredict(u, residue = 36, log_file = 'log', temperature = 298, atom_selection = 'H')
-PRE.run(output_prefix = 'calcPREs/res', tau_c = 2*1e-09, tau_t = .5*1e-9, delay = 10e-3, r_2 = 10, wh = 750)
+PRE.run(output_prefix = 'res', tau_c = 2*1e-09, tau_t = .5*1e-9, delay = 10e-3, r_2 = 10, wh = 750)
 ~~~
 
-The program generates a data file in `calcPREs` called `res-36.dat`. The first column contains the residue numbers while the second 
+The program generates a data file called `res-36.dat`. The first column contains the residue numbers while the second 
 and third contain the intensity ratios and the PRE rates (in Hz), respectively.
+Additionally, the average of $r^{-3}$, $r^{-6}$ and $\left \langle 1.5 \cos^2 \Omega - 0.5 \right \rangle$ over the rotamer states are saved to the pickle file `res-36.pkl`.
+The sum over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies are saved to `res-Z-36.pkl`.
 
 ### Reweighting
 
@@ -65,6 +67,7 @@ DEERpredict generates `res-55-55.dat` containing the smoothed distance distribut
 DEER data (Eq. 3 in DOI: 10.1126/sciadv.aat5218).
 Per-frame distance distributions are saved to the hdf5 file 'res-55-55.hdf5' making it possible to quickly reweight the data as shown above for PREpredict.
 The function to back-calculate the time-domain data from a distance distribution can also be accessed externally from the `Operations` class.
+The sums over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies of positions K55 and K55' are saved to `res-Z-55-55.pkl`.
 
 ~~~ python
 from DEERpredict.utils import Operations
