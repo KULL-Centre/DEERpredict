@@ -20,7 +20,13 @@ author = 'João Martins,  Micha BA Kunze, Ramon Crehuet, Giulio Tesei'
 release = '0.0.1'
 source_suffix = ['.rst', '.md']
 master_doc = 'index'
-extensions = ['recommonmark', 'sphinx_markdown_tables', 'sphinx.ext.autosectionlabel', 'sphinx.ext.todo', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig']
+extensions = ['recommonmark', 'sphinx.ext.todo', 'sphinx.ext.mathjax', 'sphinx_math_dollar', 'sphinx.ext.ifconfig']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+mathjax_config = {
+    'tex2jax': {
+        'inlineMath': [ ["\\(","\\)"] ],
+        'displayMath': [["\\[","\\]"] ],
+    },
+}

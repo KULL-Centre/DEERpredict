@@ -16,7 +16,7 @@ PRE.run(output_prefix = 'res', tau_c = 2*1e-09, tau_t = .5*1e-9, delay = 10e-3, 
 
 The program generates a data file called `res-36.dat`. The first column contains the residue numbers while the second 
 and third contain the intensity ratios and the PRE rates (in Hz), respectively.
-Additionally, the average of $r^{-3}$, $r^{-6}$ and $\left \langle 1.5 \cos^2 \Omega - 0.5 \right \rangle$ over the rotamer states are saved to the pickle file `res-36.pkl`.
+Additionally, the Boltzmann weighted averages of $r^{-3}$, $r^{-6}$ and $(1.5 \cos^2 \Omega - 0.5)$ over the rotamer states are saved to the pickle file `res-36.pkl`.
 The sum over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies are saved to `res-Z-36.pkl`.
 
 ### Reweighting
