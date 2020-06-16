@@ -9,3 +9,4 @@ pyyaml
 sphinx
 recommonmark
 sphinx_rtd_theme
+sphinx-math-dollar
