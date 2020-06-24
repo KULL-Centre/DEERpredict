@@ -4,7 +4,7 @@ import numpy as np
 from DEERPREdict.DEER import DEERpredict
 
 def test_DEER():
-    u = MDAnalysis.Universe('tests/data/HIV-1PR/HIV-1PR.pdb')
+    u = MDAnalysis.Universe('tests/data/HIV-1PR/PDBs/HIV-1PR.pdb')
     DEER = DEERpredict(u, residues = [55, 55], chains=['A', 'B'], temperature = 298, log_file = 'tests/data/HIV-1PR/log')
     DEER.run(output_prefix = 'tests/data/HIV-1PR/res')
     r, p = np.loadtxt('tests/data/HIV-1PR/res-55-55.dat',unpack=True)

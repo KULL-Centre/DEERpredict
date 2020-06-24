@@ -31,7 +31,7 @@ def find_version(*file_paths):
 
 setup(
     name='DEER-PREdict',
-    version=find_version('DEER-PREdict', '__init__.py'),
+    version=find_version('DEERPREdict', '__init__.py'),
     description='A package for DEER and PRE predictions based on molecular dynamics ensembles. Can be installed with pip.',
     long_description_content_type='text/markdown',
     long_description=long_description,
@@ -54,6 +54,5 @@ setup(
     include_package_data=True,
     author='João M Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
     install_requires=install_requires,
-    depedency_links=dependency_links,
-    scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict']
+    depedency_links=dependency_links
 )
