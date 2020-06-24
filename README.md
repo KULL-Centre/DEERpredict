@@ -44,8 +44,10 @@ Contributors
 -------------
 
 [João M Martins (@joaommartins)](https://github.com/joaommartins)
-[Micha BA Kunze (@mbakunze)](https://github.com/mbakunze)
-[Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet)
-[Giulio Tesei (@gitesei)](https://github.com/gitesei)
 
+[Micha BA Kunze (@mbakunze)](https://github.com/mbakunze)
+
+[Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet)
+
+[Giulio Tesei (@gitesei)](https://github.com/gitesei)
 
