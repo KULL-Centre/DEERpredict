@@ -30,7 +30,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 setup(
-    name='DEER-PREdict',
+    name='DEERPREdict',
     version=find_version('DEERPREdict', '__init__.py'),
     description='A package for DEER and PRE predictions based on molecular dynamics ensembles. Can be installed with pip.',
     long_description_content_type='text/markdown',

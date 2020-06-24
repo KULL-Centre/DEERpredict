@@ -15,7 +15,7 @@ Installation
 To install use pip:
 
 ```bash
-  pip install DEER-PREdict
+  pip install DEERPREdict
 ```
 
 or clone the repo:

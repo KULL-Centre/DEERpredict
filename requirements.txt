@@ -1,9 +1,9 @@
 Cython
+MDAnalysis==0.20.1
 numpy
 pandas
 matplotlib
 scipy
-MDAnalysis
 h5py
 pyyaml
 sphinx
