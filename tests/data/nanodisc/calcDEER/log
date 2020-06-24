@@ -1,0 +1,175 @@
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residues 67 and 67
+INFO:root:Loading pre-computed data from calcDEER/res-67-67.hdf5 - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residues 166 and 166
+INFO:root:Loading pre-computed data from calcDEER/res-166-166.hdf5 - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residues 100 and 100
+INFO:root:Loading pre-computed data from calcDEER/res-100-100.hdf5 - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residues 192 and 192
+INFO:root:Loading pre-computed data from calcDEER/res-192-192.hdf5 - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residues 148 and 148
+INFO:root:Loading pre-computed data from calcDEER/res-148-148.hdf5 - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residues 213 and 213
+INFO:root:Loading pre-computed data from calcDEER/res-213-213.hdf5 - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residues 67 and 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residues 166 and 166
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residues 100 and 100
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residues 192 and 192
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residues 148 and 148
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residues 213 and 213
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 166
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 166
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 100
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 100
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 192
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 192
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 148
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 148
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 213
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 213
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 235
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory md.xtc with labeled residue 235
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/res-67.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-67.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-67.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-166.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-166.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-100.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-100.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-192.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-192.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-148.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-148.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-213.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-213.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/ABres-235.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Loading pre-computed data from calcPRE/BAres-235.pkl - will not load trajectory file.
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 67
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 166
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 166
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 100
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 100
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 192
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 192
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 148
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 148
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 213
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 213
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 235
+INFO:MDAnalysis.app:Using rotamer library 'MTSSL 175K X1X2' by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+INFO:MDAnalysis.app:Please cite: DOI 10.1039/C0CP01865A
+INFO:root:Starting rotamer distance analysis of trajectory 2N5E.xtc with labeled residue 235

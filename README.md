@@ -4,25 +4,21 @@
 DEER-PREdict
 ===========
 
-Version 0.2.0
-
-Authors: [João Martins (@joaommartins)](https://github.com/joaommartins), [Micha BA Kunze (@mbakunze)](https://github.com/mbakunze) , [Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet), [Giulio Tesei (@gitesei)](https://github.com/gitesei)
-
 Overview
 --------
 
-A package for double electron-electron resonance (DEER) and paramagnetic relaxation enhancement (PRE) predictions from molecular dynamics ensembles. Can be installed with pip.
+A package for double electron-electron resonance (DEER) and paramagnetic relaxation enhancement (PRE) predictions from molecular dynamics ensembles.
 
-Installation / Usage
---------------------
+Installation
+------------
 
 To install use pip:
 
 ```bash
-  pip install DEERpredict
+  pip install DEER-PREdict
 ```
 
-Or clone the repo:
+or clone the repo:
 
 ```bash
   git clone https://github.com/KULL-Centre/DEERpredict.git
@@ -32,17 +28,24 @@ Or clone the repo:
 ```
     
 Documentation
-------------
+-------------
 
 [![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest&style=for-the-badge)](https://deerpredict.readthedocs.io/en/latest/?badge=latest)
 
 
-Example
--------
-
 Testing
+-------
 
 ```bash
   cd DEERpredict
   python -m pytest
 ```
+Contributors
+-------------
+
+[João M Martins (@joaommartins)](https://github.com/joaommartins)
+[Micha BA Kunze (@mbakunze)](https://github.com/mbakunze)
+[Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet)
+[Giulio Tesei (@gitesei)](https://github.com/gitesei)
+
+

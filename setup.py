@@ -30,9 +30,10 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 setup(
-    name='DEERpredict',
-    version=find_version('DEERpredict', '__init__.py'),
+    name='DEER-PREdict',
+    version=find_version('DEER-PREdict', '__init__.py'),
     description='A package for DEER and PRE predictions based on molecular dynamics ensembles. Can be installed with pip.',
+    long_description_content_type='text/markdown',
     long_description=long_description,
     url='https://github.com/KULL-Centre/DEERpredict',
     license='GPLv3',
@@ -51,7 +52,7 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='João Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
+    author='João M Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
     install_requires=install_requires,
     depedency_links=dependency_links,
     scripts=['scripts/DEERpredict', 'scripts/ePREdict', 'scripts/FRETpredict']

@@ -19,7 +19,7 @@ import math
 import logging
 
 # Inner imports
-from DEERpredict.utils import Operations
+from DEERPREdict.utils import Operations
 
 class DEERpredict(Operations):
     """Calculation of distance distributions between two spin labels."""

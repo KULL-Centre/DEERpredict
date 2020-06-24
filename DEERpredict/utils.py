@@ -11,8 +11,8 @@ import os
 import numpy as np
 import MDAnalysis
 from MDAnalysis.coordinates.memory import MemoryReader
-from DEERpredict.lennardjones import vdw, p_Rmin2, eps
-import DEERpredict.libraries as libraries
+from DEERPREdict.lennardjones import vdw, p_Rmin2, eps
+import DEERPREdict.libraries as libraries
 import logging
 import scipy.special as special
 

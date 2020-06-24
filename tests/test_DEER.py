@@ -1,7 +1,7 @@
 import pytest
 import MDAnalysis
 import numpy as np
-from DEERpredict.DEER import DEERpredict
+from DEERPREdict.DEER import DEERpredict
 
 def test_DEER():
     u = MDAnalysis.Universe('tests/data/HIV-1PR/HIV-1PR.pdb')

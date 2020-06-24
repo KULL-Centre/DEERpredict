@@ -13,7 +13,7 @@ import MDAnalysis
 from MDAnalysis.coordinates.memory import MemoryReader
 import pandas as pd
 import logging
-from DEERpredict.utils import Operations
+from DEERPREdict.utils import Operations
 
 class PREpredict(Operations):
     """Calculation of the distance profile between a probe and backbone amide."""

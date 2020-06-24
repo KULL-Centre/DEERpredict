@@ -3,7 +3,7 @@ import MDAnalysis
 import os
 import sys
 import numpy as np
-from DEERpredict.PRE import PREpredict
+from DEERPREdict.PRE import PREpredict
 import pandas as pd
 
 def load_precalcPREs(path,labels,tau_c,Cbeta):
