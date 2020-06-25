@@ -26,6 +26,8 @@ or clone the repo:
 
   pip install -e . 
 ```
+
+The software requires Python 3.6+.
     
 Documentation
 -------------
