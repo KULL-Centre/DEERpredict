@@ -28,7 +28,7 @@ mathjax_config = {
     'tex2jax': {
       'inlineMath': [ ['$','$'], ["\\(","\\)"] ],
       'displayMath': [ ['$$','$$'], ["\\[","\\]"] ],
-      'processEscapes': true
+      'processEscapes': 'true'
     },
-    'HTML-CSS': { fonts: ["TeX"] }
+    'HTML-CSS': { 'fonts': ["TeX"] }
 }
