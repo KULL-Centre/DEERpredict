@@ -12,7 +12,7 @@ A package for double electron-electron resonance (DEER) and paramagnetic relaxat
 Installation
 ------------
 
-To install use pip:
+To install DEER-PREdict, use the PyPI package:
 
 ```bash
   pip install DEERPREdict

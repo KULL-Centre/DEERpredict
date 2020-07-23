@@ -10,6 +10,7 @@ Welcome to DEER-PREdict!
    :maxdepth: 2
 
    _docs/docs
+   _docs/installation
    _docs/running
    _docs/api
    _docs/libraries

@@ -2,8 +2,11 @@
 
 The libraries included are loaded from the yaml file `data/libraries.yml`
 
++---------------------------+-----------------------------+
 |                           | topology                    |
-|:--------------------------|:----------------------------|
++===========================+=============================+
+| MTSSL 175K X1X2           | MTSSL_175K_X1X2.pdb         |
+| MTSSL 175K CASD           | MTSSL_175K_CaSd_216.pdb     |
 | Alexa 488 100cutoff 2step | rot_lib_matrix_alexa488.pdb |
 | Alexa 488 100cutoff 3step | rot_lib_matrix_alexa488.pdb |
 | Alexa 488 10cutoff 2step  | rot_lib_matrix_alexa488.pdb |
@@ -56,5 +59,4 @@ The libraries included are loaded from the yaml file `data/libraries.yml`
 | Alexa 594 50cutoff 3step  | rot_lib_matrix_alexa594.pdb |
 | Alexa 594 75cutoff 2step  | rot_lib_matrix_alexa594.pdb |
 | Alexa 594 75cutoff 3step  | rot_lib_matrix_alexa594.pdb |
-| MTSSL 175K CASD           | MTSSL_175K_CaSd_216.pdb     |
-| MTSSL 175K X1X2           | MTSSL_175K_X1X2.pdb         |
++---------------------------+-----------------------------+
