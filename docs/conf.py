@@ -26,7 +26,9 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 mathjax_config = {
     'tex2jax': {
-        'inlineMath': [ ["\\(","\\)"] ],
-        'displayMath': [["\\[","\\]"] ],
+      'inlineMath': [ ['$','$'], ["\\(","\\)"] ],
+      'displayMath': [ ['$$','$$'], ["\\[","\\]"] ],
+      'processEscapes': true
     },
+    'HTML-CSS': { fonts: ["TeX"] }
 }
