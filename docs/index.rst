@@ -14,4 +14,5 @@ Welcome to DEER-PREdict!
    _docs/running
    _docs/api
    _docs/libraries
+   _docs/tests
 

@@ -1,6 +1,6 @@
 # Libraries
 
-The libraries included are loaded from the yaml file `data/libraries.yml`
+New libraries should be included in the yaml file `data/libraries.yml`.
 
 
 |           name            | topology                    |

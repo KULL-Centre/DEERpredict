@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/gitesei/DEERpredict.svg?branch=master)](https://travis-ci.com/gitesei/DEERpredict)
-[![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io)
 
 DEER-PREdict
 ===========
@@ -32,7 +32,7 @@ The software requires Python 3.6+.
 Documentation
 -------------
 
-[![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest&style=for-the-badge)](https://deerpredict.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest&style=for-the-badge)](https://deerpredict.readthedocs.io)
 
 
 Testing
