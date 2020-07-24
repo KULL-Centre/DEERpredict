@@ -1,6 +1,6 @@
-# DEER-PREdict API reference
+# DEER-PREdict API Reference
 
-The module has three main classes:
+DEER-PREdict has three main classes:
 - `DEERpredict` performs Double Electron-Electron Resonance predictions. <br>
    Functions: `trajectoryAnalysis`, `run` and `save`.
 - `PREpredict` performs Paramagnetic Relaxation Enhancement calculations. <br>

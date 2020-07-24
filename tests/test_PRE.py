@@ -32,7 +32,7 @@ def calcIratio(path,tau_c,args):
     PRE.run(output_prefix = path+'/calcPREs/res', tau_c = tau_c*1e-09, tau_t = tau_t*1e-9,
             k = 1.23e16, r_2 = r_2, wh = 750, delay = 10e-3)
 
-def test_PRE():
+def test_ACBP():
     if not os.path.isdir('tests/data/ACBP/calcPREs'):
         os.mkdir('tests/data/ACBP/calcPREs')
     u = MDAnalysis.Universe('tests/data/ACBP/1nti.pdb')
@@ -45,3 +45,16 @@ def test_PRE():
             resnums, precalcPREs = load_precalcPREs('tests/data/ACBP/precalcPREs',labels,tau_c,Cbeta)
             resnums, calcPREs = load_calcPREs('tests/data/ACBP/calcPREs',labels)
         assert np.power(precalcPREs-calcPREs,2).sum().sum() < 0.3
+
+def test_NANODISC():
+    if not os.path.isdir('tests/data/nanodisc/calcPREs'):
+        os.mkdir('tests/data/nanodisc/calcPREs')
+    weights = np.loadtxt('tests/data/nanodisc/BME_weights.txt')
+    labels = [67,166,100,192,148,213,235]
+    u = MDAnalysis.Universe('tests/data/nanodisc/md.pdb','tests/data/nanodisc/md.xtc')
+    for label in labels:
+        PRE = PREpredict(u, residue = label, chains = ['A','B'], temperature = 303.15, atom_selection = 'N')
+        PRE.run(output_prefix = 'tests/data/nanodisc/calcPREs/res', weights = weights)
+    resnums, precalcPREs = load_calcPREs('tests/data/nanodisc/precalcPREs',labels)
+    resnums, calcPREs = load_calcPREs('tests/data/nanodisc/calcPREs',labels)
+    assert np.power(precalcPREs-calcPREs,2).sum().sum() < 0.001
