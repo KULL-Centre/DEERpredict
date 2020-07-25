@@ -7,7 +7,13 @@ cd DEERpredict
 python -m pytest
 ~~~
 
-Tests and supplementary examples are also made available as Jupyter Notebooks in the `tests/data` folder:
+The tests reproduce reference data for four protein systems:
+- HIV-1 Protease
+- T4 Lysozyme
+- Acyl-CoA-Binding Protein
+- A discoidal complex of Apolipoprotein A-I
+
+Test systems can be further explored through the Jupyter Notebooks in the `tests/data` folder:
 - `HIV-1PR/HIV-1PR.ipynb`
 - `nanodisc/nanodisc.ipynb`
 - `ACBP/ACBP.ipynb`
