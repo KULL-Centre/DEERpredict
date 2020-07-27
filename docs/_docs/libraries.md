@@ -1,36 +1,27 @@
 # Libraries
 
-New libraries should be included in the yaml file `data/libraries.yml`.
+New libraries should be included in the lib folder and listed in the yaml file `lib/libraries.yml`.
 
+The currently available libraries are the 175 K 1-Oxyl-2,2,5,5-tetramethylpyrroline-3-methyl methanethiosulfonate (MTSSL) 
+libraries developed by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke (DOI: 10.1039/C0CP01865A).
 
-|           name            | topology                    |
-|:-------------------------:|:---------------------------:|
-| MTSSL 175K X1X2           | MTSSL_175K_X1X2.pdb         |
-| MTSSL 175K CASD           | MTSSL_175K_CaSd_216.pdb     |
-| Alexa 488 100cutoff 2step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 100cutoff 3step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 10cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 10cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 125cutoff 2step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 125cutoff 3step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 150cutoff 2step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 150cutoff 3step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 15cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 15cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 200cutoff 2step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 200cutoff 3step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 20cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 20cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 25cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 25cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 300cutoff 2step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 300cutoff 3step | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 30cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 30cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 40cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 40cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 50cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 50cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 75cutoff 2step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 488 75cutoff 3step  | rot_lib_matrix_alexa488.pdb |
-| Alexa 594 100cutoff 2step | rot_lib_matrix_alexa594.pdb |
+| name                      | topology                    | reference            |
+|:-------------------------:|:---------------------------:|:--------------------:|
+| MTSSL 175K X1X2           | MTSSL_175K_X1X2.pdb         |DOI 10.1039/C0CP01865A|   
+| MTSSL 175K CASD           | MTSSL_175K_CaSd_216.pdb     |DOI 10.1039/C0CP01865A|
+
+Copyright © 2009-2013, Yevhen Polyhach, Stefan Stoll & Gunnar Jeschke
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer 
+  in the documentation and/or other materials provided with the distribution
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS 
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

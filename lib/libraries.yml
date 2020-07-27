@@ -1,0 +1,12 @@
+MTSSL 175K CASD:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: MTSSL_175K_CaSd_216.txt
+  license: GPLv3
+  topology: MTSSL_175K_CaSd_216.pdb
+MTSSL 175K X1X2:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: MTSSL_175K_X1X2.txt
+  license: GPLv3
+  topology: MTSSL_175K_X1X2.pdb
