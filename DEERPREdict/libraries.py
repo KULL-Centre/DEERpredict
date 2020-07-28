@@ -19,7 +19,7 @@ import pkg_resources
 import yaml
 
 #: Name of the directory in the package that contains the library data.
-LIBDIR = "../lib"
+LIBDIR = "./lib"
 
 #Copyright © 2009-2013, Yevhen Polyhach, Stefan Stoll & Gunnar Jeschke
 #
