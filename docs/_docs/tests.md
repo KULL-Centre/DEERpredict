@@ -3,6 +3,7 @@
 Tests can be run using the test running tool pytest:
 
 ~~~ bash
+git clone https://github.com/KULL-Centre/DEERpredict.git
 cd DEERpredict
 python -m pytest
 ~~~

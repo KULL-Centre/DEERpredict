@@ -39,7 +39,9 @@ Testing
 -------
 
 ```bash
+  git clone https://github.com/KULL-Centre/DEERpredict.git
   cd DEERpredict
+
   python -m pytest
 ```
 Contributors
