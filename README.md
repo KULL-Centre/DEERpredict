@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.com/gitesei/DEERpredict.svg?branch=master)](https://travis-ci.com/gitesei/DEERpredict)
 [![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io)
+[![DOI](https://zenodo.org/badge/217526987.svg)](https://zenodo.org/badge/latestdoi/217526987)
 
 DEER-PREdict
 ===========
