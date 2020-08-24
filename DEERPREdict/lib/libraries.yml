@@ -3,7 +3,37 @@ MTSSL 175K CASD:
   citation: DOI 10.1039/C0CP01865A
   data: MTSSL_175K_CaSd_216.txt
   license: GPLv3
-  topology: MTSSL_175K_CaSd_216.pdb
+  topology: MTSSL_CaSd_216.pdb
+MTSSL R1A 298K UFF r1 CASD:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: R1A_298K_UFF_216_r1_CASD.txt
+  license: GPLv3
+  topology: MTSSL_CaSd_216.pdb
+MTSSL R1A 298K UFF r2 CASD:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: R1A_298K_UFF_216_r2_CASD.txt
+  license: GPLv3
+  topology: MTSSL_CaSd_216.pdb
+MTSSL R1A 298K UFF r3 CASD:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: R1A_298K_UFF_216_r3_CASD.txt
+  license: GPLv3
+  topology: MTSSL_CaSd_216.pdb
+MTSSL R1A 298K UFF r4 CASD:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: R1A_298K_UFF_216_r4_CASD.txt
+  license: GPLv3
+  topology: MTSSL_CaSd_216.pdb
+MTSSL R1A 298K UFF r5 CASD:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: R1A_298K_UFF_216_r5_CASD.txt
+  license: GPLv3
+  topology: MTSSL_CaSd_216.pdb
 MTSSL 175K X1X2:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
