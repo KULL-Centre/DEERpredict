@@ -81,7 +81,7 @@ class RotamerLibrary(object):
     The library makes available the attributes :attr:`data` and :attr:`weights`.
 
     Attributes:
-        data (:py:class:`numpy.ndarray`): Array containing the relative coordinates of each rotamer.
+        coord (:py:class:`numpy.ndarray`): Array containing the relative coordinates of each rotamer.
 
         weights (:py:class:`numpy.ndarray`): Array containing the population of each rotamer.
 
@@ -113,21 +113,9 @@ class RotamerLibrary(object):
         logger.debug("[rotamers] populations = {0[data]}".format(self.lib))
 
         self.top = MDAnalysis.Universe(self.lib['topology'])
-        self.data = np.loadtxt(self.lib['data'], dtype='float32')
-
-        self.weights = self.read_rotamer_weights()
-
-    def read_rotamer_weights(self):
-        """
-
-        Extracts the weights from the loaded rotamer data.
-
-        Returns:
-            numpy.ndarray: Rotamer library weights
-
-        """
-        weights = self.data.reshape((self.data.shape[0] // (len(self.top.atoms)), len(self.top.atoms), 6))[:, 0, 5]
-        return weights
+        data = np.loadtxt(self.lib['data'], dtype='float32',usecols=(2,3,4,5))
+        self.coord = data.reshape((data.shape[0] // len(self.top.atoms),len(self.top.atoms), 4))[:,:,:3].swapaxes(0, 1)
+        self.weights = data.reshape((data.shape[0] // len(self.top.atoms),len(self.top.atoms), 4))[:,0,3]
 
     def __repr__(self):
         """

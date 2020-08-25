@@ -56,14 +56,13 @@ class Operations(object):
         z_vector = np.cross(x_vector, yt_vector)
         z_vector /= np.linalg.norm(z_vector)
         y_vector = np.cross(z_vector, x_vector)
-        rotation = np.array((x_vector, y_vector, z_vector)).T
-        probe_coords = self.lib.data[:, 2:5].copy().T
-        probe_coords = np.dot(rotation, probe_coords).T
-        probe_coords = probe_coords.reshape((self.lib.data.shape[0] // (len(self.lib.top.atoms)),
-                                             len(self.lib.top.atoms), 3))
-        probe_coords += offset
-        probe_coords = probe_coords.swapaxes(0, 1)
+        rotation = np.vstack([x_vector, y_vector, z_vector])
+        probe_coords = np.tensordot(self.lib.coord,rotation,axes=([2],[0])) + offset
         universe.load_new(probe_coords, format=MemoryReader, order='afc')
+        #mtssl = universe.select_atoms("all")
+        #with MDAnalysis.Writer("mtssl.pdb", mtssl.n_atoms) as W:
+        #    for ts in universe.trajectory:
+        #        W.write(mtssl)
         return universe
 
     def lj_calculation(self, fitted_rotamers, residue_sel):
@@ -88,7 +87,7 @@ class Operations(object):
         proteinNotSite = proteinNotSite.indices
         #Convert indices of protein atoms (constant within each frame) to positions
         proteinNotSite = self.protein.trajectory.ts.positions[proteinNotSite]
-        lj_energy_pose = np.zeros((len(fitted_rotamers.trajectory)))
+        lj_energy_pose = np.zeros(len(fitted_rotamers.trajectory))
         for rotamer_counter, rotamer in enumerate(fitted_rotamers.trajectory):
             d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ],proteinNotSite)
             d = np.power(rmin_ij/d,6)
@@ -102,7 +101,7 @@ class Operations(object):
         # Set to zero Boltzmann weights that are NaN
         boltz[np.isnan(boltz)] = 0.0
 
-        # Multiply Boltzmann weights by user-supplied and library weights
+        # Multiply Boltzmann weights by library weights
         boltz = lib_weights_norm * boltz
         return boltz, np.nansum(boltz)
 

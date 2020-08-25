@@ -25,7 +25,7 @@ Per-frame distances and angles are saved in the pickle file `res-36.pkl`. These 
 by statistical weights obtaine e.g. from BME reweighting:
 
 ~~~ python
-PRE.run(output_prefix = 'calcPREs/res', tau_c = 2*1e-09, tau_t = .5*1e-9, delay = 10e-3, r_2 = 10, wh = 750, weights = weights, load_file = res-36.pkl)
+PRE.run(output_prefix = 'calcPREs/res', tau_c = 2*1e-09, tau_t = .5*1e-9, delay = 10e-3, r_2 = 10, wh = 750, weights = weights, load_file = 'res-36.pkl')
 ~~~
 
 ### Intermolecular PREs

@@ -3,12 +3,17 @@
 New libraries should be included in the lib folder and listed in the yaml file `DEERPREdict/lib/libraries.yml`.
 
 The currently available libraries are the 175 K 1-Oxyl-2,2,5,5-tetramethylpyrroline-3-methyl methanethiosulfonate (MTSSL) 
-libraries developed by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke (DOI: 10.1039/C0CP01865A).
+libraries developed by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke (DOI 10.1039/C0CP01865A) and implemented in MMM (DOI 10.1002/pro.3269).
 
-| name                      | topology                    | reference            |
-|:-------------------------:|:---------------------------:|:--------------------:|
-| MTSSL 175K X1X2           | MTSSL_175K_X1X2.pdb         |DOI 10.1039/C0CP01865A|   
-| MTSSL 175K CASD           | MTSSL_175K_CaSd_216.pdb     |DOI 10.1039/C0CP01865A|
+| name                      | coordinates                  | reference            |
+|:-------------------------:|:----------------------------:|:--------------------:|
+| MTSSL 175K X1X2           | MTSSL_175K_X1X2_46.txt       |DOI 10.1039/C0CP01865A|   
+| MTSSL 175K CASD           | MTSSL_175K_CaSd_216.txt      |DOI 10.1039/C0CP01865A|
+| MTSSL 298K UFF r1 CASD    | R1A_298K_UFF_216_r1_CASD.txt |DOI 10.1002/pro.3269  |
+| MTSSL 298K UFF r2 CASD    | R1A_298K_UFF_216_r2_CASD.txt |DOI 10.1002/pro.3269  |
+| MTSSL 298K UFF r3 CASD    | R1A_298K_UFF_216_r3_CASD.txt |DOI 10.1002/pro.3269  |
+| MTSSL 298K UFF r4 CASD    | R1A_298K_UFF_216_r4_CASD.txt |DOI 10.1002/pro.3269  |
+| MTSSL 298K UFF r5 CASD    | R1A_298K_UFF_216_r5_CASD.txt |DOI 10.1002/pro.3269  |
 
 Copyright © 2009-2013, Yevhen Polyhach, Stefan Stoll & Gunnar Jeschke
 
