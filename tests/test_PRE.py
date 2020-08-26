@@ -53,7 +53,9 @@ def test_NANODISC():
     u = MDAnalysis.Universe('tests/data/nanodisc/md.pdb','tests/data/nanodisc/md.xtc')
     for label in labels:
         PRE = PREpredict(u, residue = label, chains = ['A','B'], temperature = 303.15, atom_selection = 'N')
-        PRE.run(output_prefix = 'tests/data/nanodisc/calcPREs/res', weights = weights)
+        PRE.run(output_prefix = 'tests/data/nanodisc/calcPREs/res', weights = weights,
+                tau_t = 1*1e-9, delay = 0.01, tau_c = 34*1e-09, k = 1.23e16, r_2 = 60, wh = 600)
     resnums, precalcPREs = load_calcPREs('tests/data/nanodisc/precalcPREs',labels)
     resnums, calcPREs = load_calcPREs('tests/data/nanodisc/calcPREs',labels)
+    print(np.power(precalcPREs-calcPREs,2).sum().sum())
     assert np.power(precalcPREs-calcPREs,2).sum().sum() < 0.001

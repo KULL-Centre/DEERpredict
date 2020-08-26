@@ -15,6 +15,7 @@ from DEERPREdict.lennardjones import vdw, p_Rmin2, eps
 import DEERPREdict.libraries as libraries
 import logging
 import scipy.special as special
+from scipy.spatial.distance import cdist
 
 class Operations(object):
     """Calculation of the distance profile between a probe and backbone amide."""
@@ -59,6 +60,7 @@ class Operations(object):
         rotation = np.vstack([x_vector, y_vector, z_vector])
         probe_coords = np.tensordot(self.lib.coord,rotation,axes=([2],[0])) + offset
         universe.load_new(probe_coords, format=MemoryReader, order='afc')
+        #save aligned rotamers
         #mtssl = universe.select_atoms("all")
         #with MDAnalysis.Writer("mtssl.pdb", mtssl.n_atoms) as W:
         #    for ts in universe.trajectory:
@@ -68,10 +70,10 @@ class Operations(object):
     def lj_calculation(self, fitted_rotamers, residue_sel):
         gas_un = 1.9858775e-3 # CHARMM, in kcal/mol*K
         if self.ign_H:
-            proteinNotSite = self.protein.select_atoms("protein and not type H and not "+residue_sel)
+            proteinNotSite = self.protein.select_atoms("protein and not type H and not ("+residue_sel+")")
             rotamerSel_LJ = fitted_rotamers.select_atoms("not type H and not (name CA or name C or name N or name O)")
         else:
-            proteinNotSite = self.protein.select_atoms("protein and not "+residue_sel)
+            proteinNotSite = self.protein.select_atoms("protein and not ("+residue_sel+")")
             rotamerSel_LJ = fitted_rotamers.select_atoms("not (name CA or name C or name N or name O)")
             
         eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
@@ -83,10 +85,11 @@ class Operations(object):
         
         rmin_ij = np.add.outer(rmin_rotamer, rmin_protein)
         #Convert atom groups to indices for efficiecy
-        rotamerSel_LJ = rotamerSel_LJ.indices
         proteinNotSite = proteinNotSite.indices
         #Convert indices of protein atoms (constant within each frame) to positions
         proteinNotSite = self.protein.trajectory.ts.positions[proteinNotSite]
+
+        rotamerSel_LJ = rotamerSel_LJ.indices
         lj_energy_pose = np.zeros(len(fitted_rotamers.trajectory))
         for rotamer_counter, rotamer in enumerate(fitted_rotamers.trajectory):
             d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ],proteinNotSite)
@@ -94,10 +97,18 @@ class Operations(object):
             pair_LJ_energy = eps_ij*(d*d-2.*d)
             lj_energy_pose[rotamer_counter] = pair_LJ_energy.sum()
         return np.exp(-lj_energy_pose/(gas_un*self.temp))  # for new alignment method
+        # Slower implementation without for loop
+        #rot_coords = fitted_rotamers.trajectory.timeseries(rotamerSel_LJ)
+        #d = MDAnalysis.lib.distances.distance_array(rot_coords.reshape(-1,3),proteinNotSite).reshape(rot_coords.shape[0],rot_coords.shape[1],proteinNotSite.shape[0])
+        #d = np.power(rmin_ij[:,np.newaxis,:]/d,6)
+        #LJ_energy = (eps_ij[:,np.newaxis,:]*(d*d-2.*d)).sum(axis=(0,2))
+        #return np.exp(-LJ_energy/(gas_un*self.temp))
 
     def rotamerWeights(self, rotamersSite, lib_weights_norm, residue_sel):
         # Calculate Boltzmann weights
         boltz = self.lj_calculation(rotamersSite, residue_sel)
+        # save external probabilities
+        # np.savetxt(self.output_prefix+'-boltz-{:s}.dat'.format(residue_sel.replace(" ", "")),boltz)
         # Set to zero Boltzmann weights that are NaN
         boltz[np.isnan(boltz)] = 0.0
 
