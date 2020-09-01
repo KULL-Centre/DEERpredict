@@ -7,7 +7,7 @@ The class for running the PRE calculations is `PREpredict`.
 Here is how to calculate intensity ratios and PRE rates for a mutant of PDB 1NTI (20 conformations) using the rotamer-library approach
 
 ~~~ python
-from DEERpredict.PRE import PREpredict
+from DEERPREdict.PRE import PREpredict
 
 u = MDAnalysis.Universe('1nti.pdb')
 PRE = PREpredict(u, residue = 36, log_file = 'log', temperature = 298, atom_selection = 'H')
@@ -44,7 +44,7 @@ Instead of using the rotamer library approach, the position of the unpaired elec
 setting `Cbeta=True`.
 
 ~~~ python
-from DEERpredict.PRE import PREpredict
+from DEERPREdict.PRE import PREpredict
 
 u = MDAnalysis.Universe('1nti.pdb')
 PRE = PREpredict(u, residue = 36, log_file = 'log', temperature = 298, atom_selection = 'H', Cbeta = True)
@@ -57,7 +57,7 @@ PRE.run(output_prefix = 'calcPREs/res', tau_c = 2*1e-09, tau_t = .5*1e-9, delay 
 Here is an example of how to run DEERpredict to calculate the DEER distribution for HIV-1 protease (PDB ID 3BVB) labeled with nitroxide groups at residue 55.
 
 ~~~ python
-from DEERpredict.DEER import DEERpredict
+from DEERPREdict.DEER import DEERpredict
 
 DEER = DEERpredict(MDAnalysis.Universe('3BVB.pdb'), residues = [55, 55], chains=['A', 'B'], log_file = 'log', temperature = 298 )
 DEER.run(output_prefix = 'res')
@@ -70,7 +70,7 @@ The function to back-calculate the time-domain data from a distance distribution
 The sums over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies of positions K55 and K55' are saved to `res-Z-55-55.pkl`.
 
 ~~~ python
-from DEERpredict.utils import Operations
+from DEERPREdict.utils import Operations
 
 r, p = np.loadtxt('res-55-55.dat', unpack=True)
 t = np.linspace(0.01, 5.5, 512)
