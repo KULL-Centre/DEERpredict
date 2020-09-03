@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-DEERPrediction Class
---------------------
+DEER prediction Class
+---------------------
 
 Class to perform DEER prediction.
 
@@ -26,33 +26,10 @@ class DEERpredict(Operations):
 
     def __init__(self, protein, residues, **kwargs):
         """
-
         Args:
-            protein_structure (:py:class:`MDAnalysis.core.universe.Universe`):
+            protein (:py:class:`MDAnalysis.core.universe.Universe`):
             residues (list(:py:class:`str`)):
         """
-        # """RotamerDistances(universe, residue_list, **kwargs)
-        #
-        #         :Arguments:
-        #            *universe*
-        #               :class:`MDAnalysis.Universe`
-        #            *residues*
-        #               list of two residue numbers ``(r1, r2)`` that indicate
-        #               the labelled sites
-        #
-        #         :Keywords:
-        #            *dcdFilename*
-        #               name of the temporary files with rotamers fitted [``'trj'``]
-        #            *outputFile*
-        #               stem of the name of the file containing the distance histogram
-        #               (the final name will be ``<outputFile><resid_1>-<resid_2>.dat``
-        #               [``'distances'``]
-        #            *libname*
-        #               library name; the library is loaded with
-        #               :class:`rotcon.library.RotamerLibrary` [``'MTSSL 175K X1X2'``]
-        #            *discard_frames*
-        #               skip initial frames < *discard_frames* [``0``]
-        #         """
         Operations.__init__(self, protein, **kwargs)
 
         self.residues = residues

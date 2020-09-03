@@ -1,0 +1,22 @@
+cff-version: 1.0.0
+message: If you use this software, please cite it as below.
+authors:
+  - family-names: Giulio
+    given-names: Tesei
+    orcid: https://orcid.org/0000-0003-4339-4460
+  - family-names: João M.
+    given-names: Martins
+    orcid: https://orcid.org/0000-0003-3053-3775
+  - family-names: Micha B. A.
+    given-names: Kunze
+    orcid: https://orcid.org/0000-0001-8922-5510
+  - family-names: Ramon
+    given-names: Crehuet
+    orcid: https://orcid.org/0000-0002-6687-382X
+  - family-names: Kresten
+    given-names: Lindorff-Larsen
+    orcid: https://orcid.org/0000-0002-4750-6039
+title: "DEER-PREdict"
+version: 0.1.6
+doi: 10.5281/zenodo.3968395
+date-released: 2020-07-31

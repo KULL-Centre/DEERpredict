@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-PREPrediction Class
--------------------
+PRE prediction Class
+--------------------
 
 Class to perform Paramagnetic Relaxation Enhancement prediction, employing the Model-Free Solomon-Bloembergen equation.
 
