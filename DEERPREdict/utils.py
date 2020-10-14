@@ -128,6 +128,9 @@ class Operations(object):
         amide_pos = self.protein.select_atoms(self.measured_sel).positions
         # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
         n_probe_vector = nitro_pos - amide_pos
+        for d,L in enumerate(self.protein.dimensions[:3]):
+            n_probe_vector[:,:,d] = np.where(n_probe_vector[:,:,d] > 0.5 * L, n_probe_vector[:,:,d] - L, n_probe_vector[:,:,d])
+            n_probe_vector[:,:,d] = np.where(n_probe_vector[:,:,d] < - 0.5 * L, n_probe_vector[:,:,d] + L, n_probe_vector[:,:,d])
         # Distances between nitroxide and amide groups
         dists_array_r = np.linalg.norm(n_probe_vector,axis=2)
         #dists_array_r = mda_dist.distance_array(np.squeeze(nitro_pos),amide_pos,backend='OpenMP')

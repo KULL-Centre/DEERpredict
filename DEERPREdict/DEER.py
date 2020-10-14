@@ -86,6 +86,9 @@ class DEERpredict(Operations):
             nitro1_pos = (nit1_pos + oxi1_pos) / 2
             nitro2_pos = (nit2_pos + oxi2_pos) / 2
             nitro_nitro_vector = nitro1_pos - nitro2_pos #.reshape(-1,1,3)
+            for d,L in enumerate(self.protein.dimensions[:3]):
+                nitro_nitro_vector[:,:,d] = np.where(nitro_nitro_vector[:,:,d] > 0.5 * L, nitro_nitro_vector[:,:,d] - L, nitro_nitro_vector[:,:,d])
+                nitro_nitro_vector[:,:,d] = np.where(nitro_nitro_vector[:,:,d] < - 0.5 * L, nitro_nitro_vector[:,:,d] + L, nitro_nitro_vector[:,:,d])
 
             # Distances between nitroxide groups
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
