@@ -35,14 +35,12 @@ class DEERpredict(Operations):
         self.residues = residues
         logging.basicConfig(filename=kwargs.get('log_file', 'log'),level=logging.INFO)
 
-        # fourier broadening parameters
-        self.ra = -5
-        self.re = 20
-        self.nr = 501
-        sig = 0.1
-        self.rax = np.linspace(self.ra, self.re, self.nr)
-        self.tax = np.linspace(0.01, 5.5, 512)
-        self.vari = np.exp(-(self.rax/sig)**2)
+        # Parameters for the distance distributions
+        dr = 0.05
+        self.rmin = -5
+        self.rmax = kwargs.get('rmax', 12)*2 - self.rmin
+        self.nr = int(round((self.rmax-self.rmin)/dr,0) + 1)
+        self.rax = np.linspace(self.rmin, self.rmax, self.nr)
         if len(residues) != 2:
             raise ValueError("The residue_list must contain exactly 2 "
                              "residue numbers: current value {0}.".format(residues))
@@ -92,7 +90,7 @@ class DEERpredict(Operations):
 
             # Distances between nitroxide groups
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
-            dists_array = np.round((self.nr * (dists_array - self.ra)) / (self.re - self.ra)).astype(int).flatten()
+            dists_array = np.round((self.nr * (dists_array - self.rmin)) / (self.rmax - self.rmin)).astype(int).flatten()
             distribution = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size) 
             distributions[frame_ndx] = distribution
         f.close()
@@ -113,16 +111,16 @@ class DEERpredict(Operations):
             logging.info('Weights argument should be a numpy array')
             raise ValueError('Weights argument should be a numpy array')
         distribution = np.nansum(distributions*self.weights.reshape(-1,1), 0)
-        frame_inv_distr = np.fft.ifft(distribution) * np.fft.ifft(self.vari)
+        frame_inv_distr = np.fft.ifft(distribution) * np.fft.ifft(np.exp(-0.5*(self.rax/self.stdev)**2))
         smoothed = np.real(np.fft.fft(frame_inv_distr))
         smoothed /= np.trapz(smoothed, self.rax)
         np.savetxt(self.output_prefix + '-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
-                np.c_[self.rax[100:401], smoothed[200:]],
+                np.c_[self.rax[100:-100], smoothed[200:]],
                    header='distance distribution')
         np.savetxt(self.output_prefix + '-dist-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),
                 np.c_[self.rax, distribution],
                    header='distance distribution')
-        time_domain_smoothed = self.calcTimeDomain(self.tax, self.rax[100:401], smoothed[200:])
+        time_domain_smoothed = self.calcTimeDomain(self.tax, self.rax[100:-100], smoothed[200:])
         np.savetxt(self.output_prefix + '-{:d}-{:d}_time-domain.dat'.format(self.residues[0], self.residues[1]),
                    np.c_[self.tax, time_domain_smoothed],
                    header='time d(t)')
@@ -135,6 +133,14 @@ class DEERpredict(Operations):
         self.load_file = kwargs.get('load_file', False)
         # Weights for each frame
         self.weights = kwargs.get('weights', False)
+        # DEER kernel parameters
+        dt = kwargs.get('dt', 0.01)
+        tmin = kwargs.get('tmin', 0.01)
+        tmax = kwargs.get('tmax', 5.5)
+        nt = int(round((tmax-tmin)/dt,0) + 1)
+        self.tax = np.linspace(tmin, tmax, nt)
+        # Standard deviation of Gaussian low-pass filter
+        self.stdev = kwargs.get('filter_stdev', 0.05)
         if self.load_file:
             if os.path.isfile(self.load_file):
                 logging.info('Loading pre-computed data from {} - will not load trajectory file.'.format(self.load_file))

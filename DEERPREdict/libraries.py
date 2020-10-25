@@ -113,9 +113,11 @@ class RotamerLibrary(object):
         logger.debug("[rotamers] populations = {0[data]}".format(self.lib))
 
         self.top = MDAnalysis.Universe(self.lib['topology'])
-        data = np.loadtxt(self.lib['data'], dtype='float32',usecols=(2,3,4,5))
-        self.coord = data.reshape((data.shape[0] // len(self.top.atoms),len(self.top.atoms), 4))[:,:,:3].swapaxes(0, 1)
-        self.weights = data.reshape((data.shape[0] // len(self.top.atoms),len(self.top.atoms), 4))[:,0,3]
+        traj = MDAnalysis.Universe(self.lib['topology'],self.lib['data']+'.dcd')
+        # extract coordinates from XTC trajectory
+        self.coord = traj.trajectory.timeseries(traj.atoms)
+        print(self.coord.shape)
+        self.weights = np.loadtxt(self.lib['data']+'_weights.txt')
 
     def __repr__(self):
         """

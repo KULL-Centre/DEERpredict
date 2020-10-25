@@ -65,9 +65,8 @@ DEER.run(output_prefix = 'res')
 
 DEERpredict generates `res-55-55.dat` containing the smoothed distance distribution and `res-55-55_time_domain.dat` containing the time-domain 
 DEER data (Eq. 3 in DOI: 10.1126/sciadv.aat5218).
-Per-frame distance distributions are saved to the hdf5 file 'res-55-55.hdf5' making it possible to quickly reweight the data as shown above for PREpredict.
+Per-frame distance distributions are saved to the hdf5 file 'res-55-55.hdf5' making it possible to quickly reweight the data, as shown above for PREpredict.
 The function to back-calculate the time-domain data from a distance distribution can also be accessed externally from the `Operations` class.
-The sums over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies of positions K55 and K55' are saved to `res-Z-55-55.pkl`.
 
 ~~~ python
 from DEERPREdict.utils import Operations
@@ -76,3 +75,15 @@ r, p = np.loadtxt('res-55-55.dat', unpack=True)
 t = np.linspace(0.01, 5.5, 512)
 dt = Operations.calcTimeDomain(t,r,p)
 ~~~
+
+The sums over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies of positions K55 and K55' are saved to `res-Z-55-55.pkl`.
+The upper bound for the inter-probe distances can be set using the `rmax` option (default 12 nm). The interval of the time variable can be set with the options `tmin`, `tmax` and `dt`, whose default values are 0.01 $\mu$s, 5.5 $\mu$s and 0.01 $\mu$s, respectively.
+The standard deviation of the Gaussian low pass filter (default 0.05 nm), which is applied to the distance distribution for noise reduction, can be set via the option `filter_stdev` of the `run()` function, as shown below.
+
+~~~ python
+from DEERPREdict.DEER import DEERpredict
+
+DEER = DEERpredict(MDAnalysis.Universe('3BVB.pdb'), residues = [55, 55], chains=['A', 'B'], log_file = 'log', temperature = 298, rmax = 11)
+DEER.run(output_prefix = 'res', filter_stdev = 0.07)
+~~~
+
