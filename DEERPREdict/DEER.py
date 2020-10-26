@@ -51,7 +51,6 @@ class DEERpredict(Operations):
         f = h5py.File(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]), "w")
         distributions = f.create_dataset("distributions",
                 (self.protein.trajectory.n_frames, self.rax.size), fillvalue=0, compression="gzip")
-        lib_weights_norm = self.lib.weights / np.sum(self.lib.weights)
         rotamer1, prot_atoms1, residue_sel1 = self.precalculate_rotamer(self.residues[0], self.chains[0])
         rotamer2, prot_atoms2, residue_sel2 = self.precalculate_rotamer(self.residues[1], self.chains[1])
         # For each trajectory frame, place the probes at the spin-labeled site using rotamer_placement(), calculate
@@ -62,14 +61,12 @@ class DEERpredict(Operations):
             rotamersSite1 = self.rotamer_placement(rotamer1, prot_atoms1)
             rotamersSite2 = self.rotamer_placement(rotamer2, prot_atoms2)
             # straight polyhach
-            boltz1, z1 = self.rotamerWeights(rotamersSite1, lib_weights_norm, residue_sel1)
-            boltz2, z2 = self.rotamerWeights(rotamersSite2, lib_weights_norm, residue_sel2)
+            boltz1, z1 = self.rotamerWeights(rotamersSite1, residue_sel1)
+            boltz2, z2 = self.rotamerWeights(rotamersSite2, residue_sel2)
             zarray = np.append(zarray, [z1,z2])
             if (z1 <= self.z_cutoff) or (z2 <= self.z_cutoff):
                  continue
-            boltzmann_weights_norm1 = boltz1 / z1
-            boltzmann_weights_norm2 = boltz2 / z2
-            boltzmann_weights_norm =  boltzmann_weights_norm1.reshape(-1,1) * boltzmann_weights_norm2
+            boltzmann_weights =  boltz1.reshape(-1,1) * boltz2
 
             # define the atoms to measure the distances between
             rotamer1nitrogen = rotamersSite1.select_atoms("name N1")
@@ -91,7 +88,7 @@ class DEERpredict(Operations):
             # Distances between nitroxide groups
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
             dists_array = np.round((self.nr * (dists_array - self.rmin)) / (self.rmax - self.rmin)).astype(int).flatten()
-            distribution = np.bincount(dists_array, weights=boltzmann_weights_norm.flatten(), minlength=self.rax.size) 
+            distribution = np.bincount(dists_array, weights=boltzmann_weights.flatten(), minlength=self.rax.size) 
             distributions[frame_ndx] = distribution
         f.close()
         np.savetxt(self.output_prefix+'-Z-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),zarray.reshape(-1,2))

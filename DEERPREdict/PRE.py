@@ -48,8 +48,6 @@ class PREpredict(Operations):
         r3 = np.full((self.protein.trajectory.n_frames, self.measured_resnums.size), np.nan)
         r6 = np.full(r3.shape, np.nan)
         angular = np.full(r3.shape, np.nan)
-        # Pre-process rotamer weights
-        lib_weights_norm = self.lib.weights / np.sum(self.lib.weights)
         zarray = np.empty(0) # Array of steric partition functions (sum over Boltzmann weights)
         # Before getting into this loop, which consumes most of the calculations time
         # we can pre-calculate several objects that do not vary along the loop
@@ -58,15 +56,14 @@ class PREpredict(Operations):
             # Fit the rotamers onto the protein
             rotamersSite = self.rotamer_placement(universe, prot_atoms)
             # Calculate Boltzmann weights
-            boltz, z = self.rotamerWeights(rotamersSite, lib_weights_norm, residue_sel)
+            boltz, z = self.rotamerWeights(rotamersSite, residue_sel)
             # Skip this frame if the sum of the Boltzmann weights is smaller than the cutoff value
             zarray = np.append(zarray,z)
             if z <= self.z_cutoff:
                 # Store the radius of gyration of tight frames
                 continue
-            boltzmann_weights_norm = boltz / z
             # Calculate interaction distances and squared angular components of the order parameter
-            r3[frame_ndx], r6[frame_ndx], angular[frame_ndx] = self.rotamerPREanalysis(rotamersSite, boltzmann_weights_norm)
+            r3[frame_ndx], r6[frame_ndx], angular[frame_ndx] = self.rotamerPREanalysis(rotamersSite, boltz)
         # Saving analysis as a pickle file
         data = pd.Series({'r3':r3.astype(np.float32), 'r6':r6.astype(np.float32), 'angular':angular.astype(np.float32)})
         data.to_pickle(self.output_prefix+'-{:d}.pkl'.format(self.residue),compression='gzip')

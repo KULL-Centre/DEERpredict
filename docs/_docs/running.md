@@ -77,7 +77,7 @@ dt = Operations.calcTimeDomain(t,r,p)
 ~~~
 
 The sums over the Boltzmann weights for the Lennard-Jones probe-protein interaction energies of positions K55 and K55' are saved to `res-Z-55-55.pkl`.
-The upper bound for the inter-probe distances can be set using the `rmax` option (default 12 nm). The interval of the time variable can be set with the options `tmin`, `tmax` and `dt`, whose default values are 0.01 $\mu$s, 5.5 $\mu$s and 0.01 $\mu$s, respectively.
+The upper bound for the inter-probe distances can be set using the `rmax` option (default 12 nm). The interval of the time variable can be set with the options `tmin`, `tmax` and `dt`, whose default values are 0.01, 5.5 and 0.01 microseconds, respectively.
 The standard deviation of the Gaussian low pass filter (default 0.05 nm), which is applied to the distance distribution for noise reduction, can be set via the option `filter_stdev` of the `run()` function, as shown below.
 
 ~~~ python

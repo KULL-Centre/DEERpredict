@@ -62,7 +62,7 @@ class Operations(object):
         universe.load_new(probe_coords, format=MemoryReader, order='afc')
         #save aligned rotamers
         #mtssl = universe.select_atoms("all")
-        #with MDAnalysis.Writer("mtssl.pdb", mtssl.n_atoms) as W:
+        #with MDAnalysis.Writer(self.output_prefix + "mtssl{:d}.pdb".format(np.random.randint(0,10)), mtssl.n_atoms) as W:
         #    for ts in universe.trajectory:
         #        W.write(mtssl)
         return universe
@@ -93,10 +93,11 @@ class Operations(object):
         lj_energy_pose = np.zeros(len(fitted_rotamers.trajectory))
         for rotamer_counter, rotamer in enumerate(fitted_rotamers.trajectory):
             d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ],proteinNotSite)
-            d = np.power(rmin_ij/d,6)
-            pair_LJ_energy = eps_ij*(d*d-2.*d)
+            cutoff = d<10
+            d = np.power(rmin_ij[cutoff]/d[cutoff],6)
+            pair_LJ_energy = eps_ij[cutoff]*(d*d-2.*d)
             lj_energy_pose[rotamer_counter] = pair_LJ_energy.sum()
-        return np.exp(-lj_energy_pose/(gas_un*self.temp))  # for new alignment method
+        return np.exp(-lj_energy_pose/(gas_un*self.temp))
         # Slower implementation without for loop
         #rot_coords = fitted_rotamers.trajectory.timeseries(rotamerSel_LJ)
         #d = MDAnalysis.lib.distances.distance_array(rot_coords.reshape(-1,3),proteinNotSite).reshape(rot_coords.shape[0],rot_coords.shape[1],proteinNotSite.shape[0])
@@ -104,19 +105,19 @@ class Operations(object):
         #LJ_energy = (eps_ij[:,np.newaxis,:]*(d*d-2.*d)).sum(axis=(0,2))
         #return np.exp(-LJ_energy/(gas_un*self.temp))
 
-    def rotamerWeights(self, rotamersSite, lib_weights_norm, residue_sel):
+    def rotamerWeights(self, rotamersSite, residue_sel):
         # Calculate Boltzmann weights
         boltz = self.lj_calculation(rotamersSite, residue_sel)
         # save external probabilities
-        # np.savetxt(self.output_prefix+'-boltz-{:s}.dat'.format(residue_sel.replace(" ", "")),boltz)
+        #np.savetxt(self.output_prefix+'-boltz-{:s}.dat'.format(residue_sel.replace(" ", "")),boltz)
         # Set to zero Boltzmann weights that are NaN
         boltz[np.isnan(boltz)] = 0.0
-
         # Multiply Boltzmann weights by library weights
-        boltz = lib_weights_norm * boltz
-        return boltz, np.nansum(boltz)
+        boltz = self.lib.weights * boltz
+        steric_z = np.sum(boltz)
+        return boltz/steric_z, steric_z
 
-    def rotamerPREanalysis(self, rotamersSite, boltzmann_weights_norm):
+    def rotamerPREanalysis(self, rotamersSite, boltzmann_weights):
         # Select atoms for distance calculations
         rotamer_nitrogen = rotamersSite.select_atoms("name N1")
         rotamer_oxigen = rotamersSite.select_atoms("name O1")
@@ -141,10 +142,10 @@ class Operations(object):
         # Second-order Legendre polynomial 
         legendre = 1.5 * cosine**2 - 0.5
         # Weighted average of the squared angular component of the order parameter over all rotamers
-        angular = np.einsum('ijk,i,j->k', legendre, boltzmann_weights_norm, boltzmann_weights_norm)
+        angular = np.einsum('ijk,i,j->k', legendre, boltzmann_weights, boltzmann_weights)
         # Weighted averages of the interaction distance over all rotamers
-        r3 = np.dot(boltzmann_weights_norm, np.power(dists_array_r,-3))
-        r6 = np.dot(boltzmann_weights_norm, np.power(dists_array_r,-6))
+        r3 = np.dot(boltzmann_weights, np.power(dists_array_r,-3))
+        r6 = np.dot(boltzmann_weights, np.power(dists_array_r,-6))
         return r3, r6, angular
 
     @staticmethod

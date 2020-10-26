@@ -17,6 +17,8 @@ import numpy as np
 import os.path
 import pkg_resources
 import yaml
+import warnings
+warnings.filterwarnings('ignore')
 
 #: Name of the directory in the package that contains the library data.
 LIBDIR = "./lib"
@@ -116,8 +118,8 @@ class RotamerLibrary(object):
         traj = MDAnalysis.Universe(self.lib['topology'],self.lib['data']+'.dcd')
         # extract coordinates from XTC trajectory
         self.coord = traj.trajectory.timeseries(traj.atoms)
-        print(self.coord.shape)
         self.weights = np.loadtxt(self.lib['data']+'_weights.txt')
+        self.weights /= np.sum(self.weights)
 
     def __repr__(self):
         """
