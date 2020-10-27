@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/gitesei/DEERpredict.svg?branch=master)](https://travis-ci.com/gitesei/DEERpredict)
+[![Build Status](https://travis-ci.com/KULL-Centre/DEERpredict.svg?branch=master)](https://travis-ci.com/KULL-Centre/DEERpredict)
 [![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io)
 [![DOI](https://zenodo.org/badge/217526987.svg)](https://zenodo.org/badge/latestdoi/217526987)
 
@@ -40,11 +40,19 @@ Testing
 -------
 
 ```bash
-  git clone https://github.com/KULL-Centre/DEERpredict.git
   cd DEERpredict
 
   python -m pytest
 ```
+or run single tests
+
+```bash
+  cd DEERpredict
+
+  python -m pytest tests/test_PRE.py::test_ACBP
+  python -m pytest tests/test_DEER.py::test_T4L
+```
+
 Contributors
 -------------
 

@@ -2,7 +2,7 @@
 
 New libraries should be included in the lib folder and listed in the yaml file `DEERPREdict/lib/libraries.yml`.
 
-The currently available libraries are the 175 K 1-Oxyl-2,2,5,5-tetramethylpyrroline-3-methyl methanethiosulfonate (MTSSL) 
+The currently available libraries are the 175 K and 298 K 1-Oxyl-2,2,5,5-tetramethylpyrroline-3-methyl methanethiosulfonate (MTSSL) 
 libraries developed by Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke (DOI 10.1039/C0CP01865A) and implemented in MMM (DOI 10.1002/pro.3269).
 
 | name                      | coordinates                  | reference            |

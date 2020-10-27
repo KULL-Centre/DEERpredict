@@ -12,9 +12,9 @@ New rotamer libraries should be defined in the `DEERpredict.libraries.LIBRARIES`
 
 ## RotamerLibrary class
 
-`DEERpredict.libraries.LIBRARIES`: Loaded from `DEERPREdict/lib/libraries.yml`, the rotamers are saved as pdb and txt files in the `DEERPREdict/lib` folder.
+`DEERpredict.libraries.LIBRARIES`: Loaded from `DEERPREdict/lib/libraries.yml`, rotamers libraries consist of a PDB file, a DCD files and a text file for the weights. These files are included in the `DEERPREdict/lib` folder.
 
-`DEERpredict.libraries.RotamerLibrary`: Makes available the attributes `data` (rotamer coordinates) and `weights` (intrinsic probability of each rotamer).
+`DEERpredict.libraries.RotamerLibrary`: Makes available the attributes `top` (rotamer topology), `coord` (rotamer coordinates) and `weights` (intrinsic probability of each rotamer).
 
 ## Lennard-Jones parameters
 
