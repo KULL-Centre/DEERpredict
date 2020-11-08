@@ -39,12 +39,14 @@ Documentation
 Testing
 -------
 
+Run all the tests in one go
+
 ```bash
   cd DEERpredict
 
   python -m pytest
 ```
-or run single tests
+or run single tests, e.g.
 
 ```bash
   cd DEERpredict
