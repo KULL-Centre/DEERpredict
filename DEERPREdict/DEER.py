@@ -35,6 +35,12 @@ class DEERpredict(Operations):
         self.residues = residues
         logging.basicConfig(filename=kwargs.get('log_file', 'log'),level=logging.INFO)
 
+        for i in range(2):
+            residue_sel = "resid {:d}".format(self.residues[i])
+            if type(self.chains[i]) == str:
+                residue_sel += " and segid {:s}".format(self.chains[i])
+            logging.info('{:s} = {:s}'.format(residue_sel,self.protein.select_atoms(residue_sel).atoms.resnames[0]))
+
         # Parameters for the distance distributions
         dr = 0.05
         self.rmin = -5
@@ -87,11 +93,13 @@ class DEERpredict(Operations):
 
             # Distances between nitroxide groups
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
+            #np.savetxt(self.output_prefix+'-warray-{:d}-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1],frame_ndx),boltzmann_weights)
+            #np.savetxt(self.output_prefix+'-array-{:d}-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1],frame_ndx),dists_array)
             dists_array = np.round((self.nr * (dists_array - self.rmin)) / (self.rmax - self.rmin)).astype(int).flatten()
             distribution = np.bincount(dists_array, weights=boltzmann_weights.flatten(), minlength=self.rax.size) 
             distributions[frame_ndx] = distribution
         f.close()
-        np.savetxt(self.output_prefix+'-Z-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),zarray.reshape(-1,2))
+        #np.savetxt(self.output_prefix+'-Z-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),zarray.reshape(-1,2))
 
     def save(self,filename):
         f = h5py.File(filename, "r")

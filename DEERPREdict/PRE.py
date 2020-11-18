@@ -28,6 +28,12 @@ class PREpredict(Operations):
         self.residue = residue
         #  Class specific instance attributes
         logging.basicConfig(filename=kwargs.get('log_file', 'log'),level=logging.INFO)
+
+        residue_sel = "resid {:d}".format(self.residue)
+        if type(self.chains[0]) == str:
+            residue_sel += " and segid {:s}".format(self.chains[0])
+        logging.info('{:s} = {:s}'.format(residue_sel,self.protein.select_atoms(residue_sel).atoms.resnames[0]))
+
         # Approximate electron position at Cbeta
         self.Cbeta = kwargs.get('Cbeta', False)
         self.atom_selection = kwargs.get('atom_selection', 'N')
