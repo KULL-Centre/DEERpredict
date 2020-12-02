@@ -57,12 +57,12 @@ class PREpredict(Operations):
         zarray = np.empty(0) # Array of steric partition functions (sum over Boltzmann weights)
         # Before getting into this loop, which consumes most of the calculations time
         # we can pre-calculate several objects that do not vary along the loop
-        universe, prot_atoms, residue_sel = self.precalculate_rotamer(self.residue, self.chains[0])
+        universe, prot_atoms, LJ_data = self.precalculate_rotamer(self.residue, self.chains[0])
         for frame_ndx, _ in enumerate(self.protein.trajectory):
             # Fit the rotamers onto the protein
             rotamersSite = self.rotamer_placement(universe, prot_atoms)
             # Calculate Boltzmann weights
-            boltz, z = self.rotamerWeights(rotamersSite, residue_sel)
+            boltz, z = self.rotamerWeights(rotamersSite, LJ_data)
             # Skip this frame if the sum of the Boltzmann weights is smaller than the cutoff value
             zarray = np.append(zarray,z)
             if z <= self.z_cutoff:
@@ -129,7 +129,7 @@ class PREpredict(Operations):
     def run(self, **kwargs):
         self.tau_c = kwargs.get('tau_c', 1.0e-9) # rotational tumbling time
         self.tau_t = kwargs.get('tau_t', 5.0e-10) # internal correlation time 
-        self.wh = 2*np.pi*1e6*kwargs.get('wh', 700.0) # proton Larmor frequency
+        self.wh = kwargs.get('wh', 700.0) # proton Larmor frequency / (2 pi 1e6)
         self.k = kwargs.get('k', 1.23e16) 
         self.delay = kwargs.get('delay', 10.0e-3) # INEPT delay
         # Diamagnetic transverse relaxation rate

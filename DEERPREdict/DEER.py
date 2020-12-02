@@ -57,8 +57,8 @@ class DEERpredict(Operations):
         f = h5py.File(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]), "w")
         distributions = f.create_dataset("distributions",
                 (self.protein.trajectory.n_frames, self.rax.size), fillvalue=0, compression="gzip")
-        rotamer1, prot_atoms1, residue_sel1 = self.precalculate_rotamer(self.residues[0], self.chains[0])
-        rotamer2, prot_atoms2, residue_sel2 = self.precalculate_rotamer(self.residues[1], self.chains[1])
+        rotamer1, prot_atoms1, LJ_data1 = self.precalculate_rotamer(self.residues[0], self.chains[0])
+        rotamer2, prot_atoms2, LJ_data2 = self.precalculate_rotamer(self.residues[1], self.chains[1])
         # For each trajectory frame, place the probes at the spin-labeled site using rotamer_placement(), calculate
         # Boltzmann weights based on Lennard-Jones interactions and calculate weighted distributions of probe-probe separations
         zarray = np.empty(0) # Array of steric partition functions (sum over Boltzmann weights)
@@ -67,8 +67,8 @@ class DEERpredict(Operations):
             rotamersSite1 = self.rotamer_placement(rotamer1, prot_atoms1)
             rotamersSite2 = self.rotamer_placement(rotamer2, prot_atoms2)
             # straight polyhach
-            boltz1, z1 = self.rotamerWeights(rotamersSite1, residue_sel1)
-            boltz2, z2 = self.rotamerWeights(rotamersSite2, residue_sel2)
+            boltz1, z1 = self.rotamerWeights(rotamersSite1, LJ_data1)
+            boltz2, z2 = self.rotamerWeights(rotamersSite2, LJ_data2)
             zarray = np.append(zarray, [z1,z2])
             if (z1 <= self.z_cutoff) or (z2 <= self.z_cutoff):
                  continue

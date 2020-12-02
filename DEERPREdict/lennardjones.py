@@ -18,11 +18,6 @@ lj_parameters = {
         'p_q': 0,
         'p_Rmin2': 1.850,
         'eps': -0.2000
-    # 'N': {
-    #     'vdw': 2.0,
-    #     'p_q': 0,
-    #     'p_Rmin2': 2.950,
-    #     'eps': -0.2000
     },
     'O': {
         'vdw': 1.52,
@@ -48,5 +43,3 @@ lj_parameters = {
 vdw = {atom:lj_parameters[atom]['vdw'] for atom in lj_parameters}
 p_Rmin2 = {atom:lj_parameters[atom]['p_Rmin2'] for atom in lj_parameters}
 eps = {atom:lj_parameters[atom]['eps'] for atom in lj_parameters}
-
-

@@ -30,6 +30,9 @@ class Operations(object):
         self.lib = libraries.RotamerLibrary(self.libname)
         self.temp = kwargs.get('temperature', 300)
         self.z_cutoff = kwargs.get('z_cutoff', 0.05)
+        # scaling factor to reduce probe-protein steric clashes 
+        atom_scaling = kwargs.get('atom_scaling', 0.5)
+        self.rmin2 = {atom:p_Rmin2[atom]*atom_scaling for atom in p_Rmin2}
         self.ign_H = kwargs.get('ign_H', True)
         self.chains = kwargs.get('chains', [None,None])
 
@@ -42,7 +45,28 @@ class Operations(object):
         prot_N = self.protein.select_atoms('protein and name N and '+residue_sel)
         probe_coords = np.zeros((len(self.lib.top.atoms),1, 3))
         universe = MDAnalysis.Universe(self.lib.top.filename, probe_coords, format=MemoryReader, order='afc')
-        return universe, (prot_Ca, prot_Co, prot_N), residue_sel
+
+        # atom indeces and parameters for LJ calculation
+        if self.ign_H:
+            proteinNotSite = self.protein.select_atoms("protein and not type H and not ("+residue_sel+")")
+            rotamerSel_LJ = universe.select_atoms("not type H and not (name CA or name C or name N or name O)")
+        else:
+            proteinNotSite = self.protein.select_atoms("protein and not ("+residue_sel+")")
+            rotamerSel_LJ = universe.select_atoms("not (name CA or name C or name N or name O)")
+            
+        eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
+        rmin2_rotamer = np.array([self.rmin2[probe_atom] for probe_atom in rotamerSel_LJ.types])
+
+        eps_protein = np.array([eps[probe_atom] for probe_atom in proteinNotSite.types])
+        rmin2_protein = np.array([self.rmin2[probe_atom] for probe_atom in proteinNotSite.types])
+        eps_ij = np.sqrt(np.multiply.outer(eps_rotamer, eps_protein))
+        rmin_ij = np.add.outer(rmin2_rotamer, rmin2_protein)
+        #Convert atom groups to indices for efficiecy
+        proteinNotSite = proteinNotSite.indices
+        rotamerSel_LJ = rotamerSel_LJ.indices
+        LJ_data = [proteinNotSite,rotamerSel_LJ,eps_ij,rmin_ij]
+ 
+        return universe, (prot_Ca, prot_Co, prot_N), LJ_data 
         
     def rotamer_placement(self, universe, prot_atoms):
         prot_Ca, prot_Co, prot_N = prot_atoms
@@ -67,29 +91,11 @@ class Operations(object):
         #        W.write(mtssl)
         return universe
 
-    def lj_calculation(self, fitted_rotamers, residue_sel):
+    def lj_calculation(self, fitted_rotamers, LJ_data):
         gas_un = 1.9858775e-3 # CHARMM, in kcal/mol*K
-        if self.ign_H:
-            proteinNotSite = self.protein.select_atoms("protein and not type H and not ("+residue_sel+")")
-            rotamerSel_LJ = fitted_rotamers.select_atoms("not type H and not (name CA or name C or name N or name O)")
-        else:
-            proteinNotSite = self.protein.select_atoms("protein and not ("+residue_sel+")")
-            rotamerSel_LJ = fitted_rotamers.select_atoms("not (name CA or name C or name N or name O)")
-            
-        eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
-        rmin_rotamer = np.array([p_Rmin2[probe_atom] for probe_atom in rotamerSel_LJ.types])*0.5
-
-        eps_protein = np.array([eps[probe_atom] for probe_atom in proteinNotSite.types])
-        rmin_protein = np.array([p_Rmin2[probe_atom] for probe_atom in proteinNotSite.types])*0.5
-        eps_ij = np.sqrt(np.multiply.outer(eps_rotamer, eps_protein))
-        
-        rmin_ij = np.add.outer(rmin_rotamer, rmin_protein)
-        #Convert atom groups to indices for efficiecy
-        proteinNotSite = proteinNotSite.indices
+        proteinNotSite, rotamerSel_LJ, eps_ij, rmin_ij = LJ_data
         #Convert indices of protein atoms (constant within each frame) to positions
         proteinNotSite = self.protein.trajectory.ts.positions[proteinNotSite]
-
-        rotamerSel_LJ = rotamerSel_LJ.indices
         lj_energy_pose = np.zeros(len(fitted_rotamers.trajectory))
         for rotamer_counter, rotamer in enumerate(fitted_rotamers.trajectory):
             d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ],proteinNotSite)
@@ -105,11 +111,9 @@ class Operations(object):
         #LJ_energy = (eps_ij[:,np.newaxis,:]*(d*d-2.*d)).sum(axis=(0,2))
         #return np.exp(-LJ_energy/(gas_un*self.temp))
 
-    def rotamerWeights(self, rotamersSite, residue_sel):
+    def rotamerWeights(self, rotamersSite, LJ_data):
         # Calculate Boltzmann weights
-        boltz = self.lj_calculation(rotamersSite, residue_sel)
-        # save external probabilities
-        #np.savetxt(self.output_prefix+'-boltz-{:s}.dat'.format(residue_sel.replace(" ", "")),boltz)
+        boltz = self.lj_calculation(rotamersSite, LJ_data)
         # Set to zero Boltzmann weights that are NaN
         boltz[np.isnan(boltz)] = 0.0
         # Multiply Boltzmann weights by library weights
@@ -150,11 +154,13 @@ class Operations(object):
 
     @staticmethod
     def calc_gamma_2(dist_r6, s_pre, tau_c, tau_t, wh, k):
+        wh = 2*np.pi*1e6*wh
         j = lambda w : s_pre*tau_c / (1+(w*tau_c)**2) + (1-s_pre)*tau_t / (1+(w*tau_t)**2)
         return k*dist_r6*(4*j(0) + 3*j(wh))
 
     @staticmethod
     def calc_gamma_2_Cbeta(dist_r6, tau_c, wh, k):
+        wh = 2*np.pi*1e6*wh
         j = lambda w : tau_c / (1+(w*tau_c)**2)
         return k*dist_r6*(4*j(0) + 3*j(wh))
 
