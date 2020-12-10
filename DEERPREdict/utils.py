@@ -31,8 +31,8 @@ class Operations(object):
         self.temp = kwargs.get('temperature', 300)
         self.z_cutoff = kwargs.get('z_cutoff', 0.05)
         # scaling factor to reduce probe-protein steric clashes 
-        atom_scaling = kwargs.get('atom_scaling', 0.5)
-        self.rmin2 = {atom:p_Rmin2[atom]*atom_scaling for atom in p_Rmin2}
+        sigma_scaling = kwargs.get('sigma_scaling', 0.5)
+        self.rmin2 = {atom:p_Rmin2[atom]*sigma_scaling for atom in p_Rmin2}
         self.ign_H = kwargs.get('ign_H', True)
         self.chains = kwargs.get('chains', [None,None])
 
@@ -46,7 +46,7 @@ class Operations(object):
         probe_coords = np.zeros((len(self.lib.top.atoms),1, 3))
         universe = MDAnalysis.Universe(self.lib.top.filename, probe_coords, format=MemoryReader, order='afc')
 
-        # atom indeces and parameters for LJ calculation
+        # Atom indices and parameters for LJ calculation
         if self.ign_H:
             proteinNotSite = self.protein.select_atoms("protein and not type H and not ("+residue_sel+")")
             rotamerSel_LJ = universe.select_atoms("not type H and not (name CA or name C or name N or name O)")
@@ -61,10 +61,7 @@ class Operations(object):
         rmin2_protein = np.array([self.rmin2[probe_atom] for probe_atom in proteinNotSite.types])
         eps_ij = np.sqrt(np.multiply.outer(eps_rotamer, eps_protein))
         rmin_ij = np.add.outer(rmin2_rotamer, rmin2_protein)
-        #Convert atom groups to indices for efficiecy
-        proteinNotSite = proteinNotSite.indices
-        rotamerSel_LJ = rotamerSel_LJ.indices
-        LJ_data = [proteinNotSite,rotamerSel_LJ,eps_ij,rmin_ij]
+        LJ_data = [proteinNotSite.indices,rotamerSel_LJ.indices,eps_ij,rmin_ij]
  
         return universe, (prot_Ca, prot_Co, prot_N), LJ_data 
         
