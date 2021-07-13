@@ -14,8 +14,7 @@ with open(path.join(here, 'README.md')) as f:
 with open(path.join(here, 'requirements.txt')) as f:
     all_reqs = f.read().split('\n')
 
-install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
-dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' not in x]
+install_requires = [x.strip() for x in all_reqs[:-1] if 'git+' not in x]
 
 def read(*parts):
     # intentionally *not* adding an encoding option to open
@@ -53,6 +52,6 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
     author='João M Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
-    install_requires=install_requires,
-    depedency_links=dependency_links
+    author_email='giulio.tesei@bio.ku.dk',
+    install_requires=install_requires
 )
