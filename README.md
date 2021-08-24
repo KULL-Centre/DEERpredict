@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.com/KULL-Centre/DEERpredict.svg?branch=master)](https://travis-ci.com/KULL-Centre/DEERpredict)
 [![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io)
 [![DOI](https://zenodo.org/badge/217526987.svg)](https://zenodo.org/badge/latestdoi/217526987)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/KULL-Centre/DEERpredict/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/KULL-Centre/DEERpredict)
 
 DEER-PREdict
 ===========
@@ -55,8 +56,11 @@ or run single tests, e.g.
   python -m pytest tests/test_DEER.py::test_T4L
 ```
 
-Contributors
+
+Authors
 -------------
+
+[Giulio Tesei (@gitesei)](https://github.com/gitesei)
 
 [João M Martins (@joaommartins)](https://github.com/joaommartins)
 
@@ -64,5 +68,12 @@ Contributors
 
 [Ramon Crehuet (@rcrehuet)](https://github.com/rcrehuet)
 
-[Giulio Tesei (@gitesei)](https://github.com/gitesei)
+[Kresten Lindorff-Larsen (@lindorff-larsen)](https://github.com/lindorff-larsen)
 
+
+Article
+-------------
+
+Tesei G, Martins JM, Kunze MBA, Wang Y, Crehuet R, et al. (2021) 
+DEER-PREdict: Software for efficient calculation of spin-labeling EPR and NMR data from conformational ensembles. 
+PLOS Computational Biology 17(1): e1008551. [https://doi.org/10.1371/journal.pcbi.1008551](https://doi.org/10.1371/journal.pcbi.1008551)
