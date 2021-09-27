@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/KULL-Centre/DEERpredict.svg?branch=master)](https://travis-ci.com/KULL-Centre/DEERpredict)
+[![Build Status](https://app.travis-ci.com/KULL-Centre/DEERpredict.svg?branch=main)](https://app.travis-ci.com/KULL-Centre/DEERpredict)
 [![Documentation Status](https://readthedocs.org/projects/deerpredict/badge/?version=latest)](https://deerpredict.readthedocs.io)
 [![DOI](https://zenodo.org/badge/217526987.svg)](https://zenodo.org/badge/latestdoi/217526987)
 [![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/KULL-Centre/DEERpredict/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/KULL-Centre/DEERpredict)
