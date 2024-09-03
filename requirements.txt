@@ -1,5 +1,5 @@
 Cython
-MDAnalysis==1.1.1
+MDAnalysis
 numpy
 pandas
 matplotlib
@@ -8,6 +8,7 @@ h5py
 pyyaml
 sphinx
 recommonmark
+pytest
 sphinx_rtd_theme
 sphinx-math-dollar
 sphinx-markdown-tables

@@ -30,7 +30,7 @@ class Operations(object):
         self.lib = libraries.RotamerLibrary(self.libname)
         self.temp = kwargs.get('temperature', 300)
         self.z_cutoff = kwargs.get('z_cutoff', 0.05)
-        # scaling factor to reduce probe-protein steric clashes 
+        # scaling factor to reduce probe-protein steric clashes
         sigma_scaling = kwargs.get('sigma_scaling', 0.5)
         self.rmin2 = {atom:p_Rmin2[atom]*sigma_scaling for atom in p_Rmin2}
         self.ign_H = kwargs.get('ign_H', True)
@@ -53,7 +53,7 @@ class Operations(object):
         else:
             proteinNotSite = self.protein.select_atoms("protein and not ("+residue_sel+")")
             rotamerSel_LJ = universe.select_atoms("not (name CA or name C or name N or name O)")
-            
+
         eps_rotamer = np.array([eps[probe_atom] for probe_atom in rotamerSel_LJ.types])
         rmin2_rotamer = np.array([self.rmin2[probe_atom] for probe_atom in rotamerSel_LJ.types])
 
@@ -62,9 +62,9 @@ class Operations(object):
         eps_ij = np.sqrt(np.multiply.outer(eps_rotamer, eps_protein))
         rmin_ij = np.add.outer(rmin2_rotamer, rmin2_protein)
         LJ_data = [proteinNotSite.indices,rotamerSel_LJ.indices,eps_ij,rmin_ij]
- 
-        return universe, (prot_Ca, prot_Co, prot_N), LJ_data 
-        
+
+        return universe, (prot_Ca, prot_Co, prot_N), LJ_data
+
     def rotamer_placement(self, universe, prot_atoms):
         prot_Ca, prot_Co, prot_N = prot_atoms
         offset = prot_Ca.positions.copy()
@@ -130,17 +130,18 @@ class Operations(object):
         amide_pos = self.protein.select_atoms(self.measured_sel).positions
         # Distance vectors between the rotamer nitroxide position and the nitrogen position in the other residues
         n_probe_vector = nitro_pos - amide_pos
-        for d,L in enumerate(self.protein.dimensions[:3]):
-            n_probe_vector[:,:,d] = np.where(n_probe_vector[:,:,d] > 0.5 * L, n_probe_vector[:,:,d] - L, n_probe_vector[:,:,d])
-            n_probe_vector[:,:,d] = np.where(n_probe_vector[:,:,d] < - 0.5 * L, n_probe_vector[:,:,d] + L, n_probe_vector[:,:,d])
+        if self.protein.dimensions is not None:
+            for d,L in enumerate(self.protein.dimensions[:3]):
+                n_probe_vector[:,:,d] = np.where(n_probe_vector[:,:,d] > 0.5 * L, n_probe_vector[:,:,d] - L, n_probe_vector[:,:,d])
+                n_probe_vector[:,:,d] = np.where(n_probe_vector[:,:,d] < - 0.5 * L, n_probe_vector[:,:,d] + L, n_probe_vector[:,:,d])
         # Distances between nitroxide and amide groups
         dists_array_r = np.linalg.norm(n_probe_vector,axis=2)
         #dists_array_r = mda_dist.distance_array(np.squeeze(nitro_pos),amide_pos,backend='OpenMP')
-        # Ratio between distance vectors and distances 
+        # Ratio between distance vectors and distances
         n_probe_unitvector = n_probe_vector/dists_array_r[:,:,None]
         # Dot products between nitroxide-amide distances for all rotamers
         cosine = np.einsum('ijk,ljk->ilj', n_probe_unitvector, n_probe_unitvector)
-        # Second-order Legendre polynomial 
+        # Second-order Legendre polynomial
         legendre = 1.5 * cosine**2 - 0.5
         # Weighted average of the squared angular component of the order parameter over all rotamers
         angular = np.einsum('ijk,i,j->k', legendre, boltzmann_weights, boltzmann_weights)

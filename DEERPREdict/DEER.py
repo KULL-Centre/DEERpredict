@@ -87,16 +87,17 @@ class DEERpredict(Operations):
             nitro1_pos = (nit1_pos + oxi1_pos) / 2
             nitro2_pos = (nit2_pos + oxi2_pos) / 2
             nitro_nitro_vector = nitro1_pos - nitro2_pos #.reshape(-1,1,3)
-            for d,L in enumerate(self.protein.dimensions[:3]):
-                nitro_nitro_vector[:,:,d] = np.where(nitro_nitro_vector[:,:,d] > 0.5 * L, nitro_nitro_vector[:,:,d] - L, nitro_nitro_vector[:,:,d])
-                nitro_nitro_vector[:,:,d] = np.where(nitro_nitro_vector[:,:,d] < - 0.5 * L, nitro_nitro_vector[:,:,d] + L, nitro_nitro_vector[:,:,d])
+            if self.protein.dimensions is not None:
+                for d,L in enumerate(self.protein.dimensions[:3]):
+                    nitro_nitro_vector[:,:,d] = np.where(nitro_nitro_vector[:,:,d] > 0.5 * L, nitro_nitro_vector[:,:,d] - L, nitro_nitro_vector[:,:,d])
+                    nitro_nitro_vector[:,:,d] = np.where(nitro_nitro_vector[:,:,d] < - 0.5 * L, nitro_nitro_vector[:,:,d] + L, nitro_nitro_vector[:,:,d])
 
             # Distances between nitroxide groups
             dists_array = np.linalg.norm(nitro_nitro_vector, axis=2) / 10
             #np.savetxt(self.output_prefix+'-warray-{:d}-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1],frame_ndx),boltzmann_weights)
             #np.savetxt(self.output_prefix+'-array-{:d}-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1],frame_ndx),dists_array)
             dists_array = np.round((self.nr * (dists_array - self.rmin)) / (self.rmax - self.rmin)).astype(int).flatten()
-            distribution = np.bincount(dists_array, weights=boltzmann_weights.flatten(), minlength=self.rax.size) 
+            distribution = np.bincount(dists_array, weights=boltzmann_weights.flatten(), minlength=self.rax.size)
             distributions[frame_ndx] = distribution
         f.close()
         #np.savetxt(self.output_prefix+'-Z-{:d}-{:d}.dat'.format(self.residues[0], self.residues[1]),zarray.reshape(-1,2))
@@ -152,7 +153,7 @@ class DEERpredict(Operations):
             else:
                 logging.info('File {} not found!'.format(self.load_file))
                 raise FileNotFoundError('File {} not found!'.format(self.load_file))
-            self.save(self.load_file)    
+            self.save(self.load_file)
         else:
             self.trajectoryAnalysis()
             self.save(self.output_prefix+'-{:d}-{:d}.hdf5'.format(self.residues[0], self.residues[1]))
