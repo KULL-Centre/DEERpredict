@@ -56,6 +56,15 @@ or run single tests, e.g.
   python -m pytest tests/test_DEER.py::test_T4L
 ```
 
+The software requires Python 3.6-3.9.
+
+In case of dependency issues, consider installing FRETpredict in a new environment
+
+```bash
+  conda create -n myenv python=3.9 pip
+  conda activate myenv
+  pip install -e .
+```
 
 Authors
 -------------
