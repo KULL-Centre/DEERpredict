@@ -1,42 +1,60 @@
+MTSSL 175K X1X2:
+  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
+  citation: DOI 10.1039/C0CP01865A
+  data: MTSSL_175K_X1X2_46
+  license: MIT
+  topology: MTSSL_175K_X1X2.pdb
 MTSSL 175K CASD:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
   data: MTSSL_175K_CaSd_216
-  license: GPLv3
+  license: MIT
   topology: MTSSL_CaSd.pdb
 MTSSL 298K UFF r1 CASD:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
   data: R1A_298K_UFF_216_r1_CASD
-  license: GPLv3
+  license: MIT
   topology: MTSSL_CaSd.pdb
 MTSSL 298K UFF r2 CASD:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
   data: R1A_298K_UFF_216_r2_CASD
-  license: GPLv3
+  license: MIT
   topology: MTSSL_CaSd.pdb
 MTSSL 298K UFF r3 CASD:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
   data: R1A_298K_UFF_216_r3_CASD
-  license: GPLv3
+  license: MIT
   topology: MTSSL_CaSd.pdb
 MTSSL 298K UFF r4 CASD:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
   data: R1A_298K_UFF_216_r4_CASD
-  license: GPLv3
+  license: MIT
   topology: MTSSL_CaSd.pdb
 MTSSL 298K UFF r5 CASD:
   author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
   citation: DOI 10.1039/C0CP01865A
   data: R1A_298K_UFF_216_r5_CASD
-  license: GPLv3
+  license: MIT
   topology: MTSSL_CaSd.pdb
-MTSSL 175K X1X2:
-  author: Yevhen Polyhach, Enrica Bordignon and Gunnar Jeschke
-  citation: DOI 10.1039/C0CP01865A
-  data: MTSSL_175K_X1X2_46
-  license: GPLv3
-  topology: MTSSL_175K_X1X2.pdb
+MTSSL MMMx:
+  author: Gunnar Jeschke
+  citation: DOI 10.1002/pro.4906
+  data: R1A
+  license: MIT
+  topology: R1A.pdb
+BASL MMMx:
+  author: Gunnar Jeschke
+  citation: DOI 10.1002/pro.4906
+  data: BAS
+  license: MIT
+  topology: BAS.pdb
+MA-proxyl MMMx:
+  author: Gunnar Jeschke
+  citation: DOI 10.1002/pro.4906
+  data: MA1
+  license: MIT
+  topology: MA1.pdb

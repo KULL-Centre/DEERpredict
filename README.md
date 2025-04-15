@@ -64,6 +64,24 @@ or run single tests, e.g.
   python -m pytest tests/test_DEER.py::test_T4L
 ```
 
+Example
+-------------
+
+Example of how to run PREpredict to calculate the intensity ratios and PRE rates for PDB code 1NTI (20 conformations) using the BASL MMMx rotamer library (see [notebook](https://github.com/KULL-Centre/DEERpredict/blob/main/tests/data/ACBP/ACBP.ipynb))
+
+```python
+PRE = PREpredict(MDAnalysis.Universe('1nti.pdb'), residue=36, libname='BASL MMMx',
+          tau_t=.5*1e-9, log_file='calcPREs/log', temperature=298, z_cutoff=0.05,
+          atom_selection='H', Cbeta=False)
+PRE.run(output_prefix='calcPREs/BASL', tau_t=.5e-9, delay=10e-3,
+          tau_c=2e-09, r_2=10, wh=750)
+```
+
+License
+-------------
+
+This project is licensed under the GNU General Public License version 3.0 (GPL-3.0). However, the rotamer libraries are modified versions of those from the [MMMx program](https://mmmx.info/index.html), and these modified libraries are licensed under the MIT License, as detailed in the LICENSE file. The rest of the project is licensed under the GPL-3.0, and any combination of GPL-3.0 licensed files with those under the MIT License will be subject to the terms of the GPL-3.0.
+
 Authors
 -------------
 
@@ -81,6 +99,6 @@ Authors
 Article
 -------------
 
-Tesei G, Martins JM, Kunze MBA, Wang Y, Crehuet R, et al. (2021) 
+Tesei G, Martins JM, Kunze MBA, Wang Y, Crehuet R, and Lindorff-Larsen K (2021) 
 DEER-PREdict: Software for efficient calculation of spin-labeling EPR and NMR data from conformational ensembles. 
 PLOS Computational Biology 17(1): e1008551. [https://doi.org/10.1371/journal.pcbi.1008551](https://doi.org/10.1371/journal.pcbi.1008551)

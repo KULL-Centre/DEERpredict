@@ -51,7 +51,7 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='João M Martins, Micha BA Kunze, Ramon Crehuet and Giulio Tesei',
+    author='Giulio Tesei, João M Martins, Micha BA Kunze, Ramon Crehuet, and Kresten Lindorff-Larsen',
     author_email='giulio.tesei@bio.ku.dk',
     install_requires=install_requires
 )
