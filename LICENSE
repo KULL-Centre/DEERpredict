@@ -678,8 +678,8 @@ ADDITIONAL LICENSE INFORMATION
 
 This project is licensed under the GNU General Public License version 3.0 (GPL-3.0). 
 
-However, the rotamer libraries are modified versions of those from the MMMx program, and these modified libraries are licensed under the MIT License. 
-The rest of the project is licensed under the GPL-3.0, and any combination  of GPL-3.0 licensed files with those under the MIT License will be subject to the terms of the GPL-3.0.
+However, the rotamer libraries in DEERPREdict/lib are modified versions of those from the MMMx program, and these modified libraries are licensed under the MIT License. 
+The rest of the project is licensed under the GPL-3.0, and any combination of GPL-3.0 licensed files with those under the MIT License will be subject to the terms of the GPL-3.0.
 
 MIT LICENSE for rotamer libraries
 

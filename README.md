@@ -67,7 +67,7 @@ or run single tests, e.g.
 Example
 -------------
 
-Example of how to run PREpredict to calculate the intensity ratios and PRE rates for PDB code 1NTI (20 conformations) using the BASL MMMx rotamer library (see [notebook](https://github.com/KULL-Centre/DEERpredict/blob/main/tests/data/ACBP/ACBP.ipynb))
+Example of how to run PREpredict to calculate the intensity ratios and PRE rates for PDB code 1NTI (20 conformations) using the BASL MMMx rotamer library (see [notebook](https://github.com/KULL-Centre/DEERpredict/blob/main/tests/data/ACBP/ACBP.ipynb)). Available libraries for MTSSL, BASL, and MA-proxyl probes are listed in `DEERPREdict/lib/libraries.yml`.
 
 ```python
 PRE = PREpredict(MDAnalysis.Universe('1nti.pdb'), residue=36, libname='BASL MMMx',
@@ -80,7 +80,7 @@ PRE.run(output_prefix='calcPREs/BASL', tau_t=.5e-9, delay=10e-3,
 License
 -------------
 
-This project is licensed under the GNU General Public License version 3.0 (GPL-3.0). However, the rotamer libraries are modified versions of those from the [MMMx program](https://mmmx.info/index.html), and these modified libraries are licensed under the MIT License, as detailed in the LICENSE file. The rest of the project is licensed under the GPL-3.0, and any combination of GPL-3.0 licensed files with those under the MIT License will be subject to the terms of the GPL-3.0.
+This project is licensed under the GNU General Public License version 3.0 (GPL-3.0). However, the rotamer libraries in `DEERPREdict/lib` are modified versions of those from the [MMMx program](https://mmmx.info/index.html), and these modified libraries are licensed under the MIT License, as detailed in the LICENSE file. The rest of the project is licensed under the GPL-3.0, and any combination of GPL-3.0 licensed files with those under the MIT License will be subject to the terms of the GPL-3.0.
 
 Authors
 -------------
