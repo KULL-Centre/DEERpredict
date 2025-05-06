@@ -77,6 +77,16 @@ PRE.run(output_prefix='calcPREs/BASL', tau_t=.5e-9, delay=10e-3,
           tau_c=2e-09, r_2=10, wh=750)
 ```
 
+Example of how to run PREpredict to calculate the intensity ratios and PRE rates for PDB code 1NTI (20 conformations) using the MA-proxyl MMMx rotamer library.
+
+```python
+PRE = PREpredict(MDAnalysis.Universe('1nti.pdb'), residue=36, libname='MA-proxyl MMMx',
+          tau_t=.5*1e-9, log_file='calcPREs/log', temperature=298, z_cutoff=0.05,
+          attract_scaling=2, atom_selection='H', Cbeta=False)
+PRE.run(output_prefix='calcPREs/MAP', tau_t=.5e-9, delay=10e-3,
+          tau_c=2e-09, r_2=10, wh=750)
+```
+
 License
 -------------
 

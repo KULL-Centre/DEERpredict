@@ -32,6 +32,8 @@ class Operations(object):
         self.z_cutoff = kwargs.get('z_cutoff', 0.05)
         # scaling factor to reduce probe-protein steric clashes
         sigma_scaling = kwargs.get('sigma_scaling', 0.5)
+        # scaling factor to enhance probe-protein LJ interactions
+        self.attract_scaling = kwargs.get('attract_scaling', 1.0)
         self.rmin2 = {atom:p_Rmin2[atom]*sigma_scaling for atom in p_Rmin2}
         self.ign_H = kwargs.get('ign_H', True)
         self.chains = kwargs.get('chains', [None,None])
@@ -98,7 +100,7 @@ class Operations(object):
             d = MDAnalysis.lib.distances.distance_array(rotamer.positions[rotamerSel_LJ],proteinNotSite)
             cutoff = d<10
             d = np.power(rmin_ij[cutoff]/d[cutoff],6)
-            pair_LJ_energy = eps_ij[cutoff]*(d*d-2.*d)
+            pair_LJ_energy = eps_ij[cutoff]*(d*d-2.*d*self.attract_scaling)
             lj_energy_pose[rotamer_counter] = pair_LJ_energy.sum()
         return np.exp(-lj_energy_pose/(gas_un*self.temp))
         # Slower implementation without for loop
